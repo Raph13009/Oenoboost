@@ -6,8 +6,11 @@ import type { Appellation } from "@/app/admin/(cms)/appellations/actions";
 import {
   createAppellation,
   deleteAppellation,
+  getAppellationSoilLinks,
+  setAppellationSoilLinks,
   updateAppellation,
 } from "@/app/admin/(cms)/appellations/actions";
+import type { SoilType } from "@/app/admin/(cms)/soil-types/actions";
 import type { WineRegion } from "@/app/admin/(cms)/wine-regions/actions";
 import type { WineSubregion } from "@/app/admin/(cms)/wine-subregions/actions";
 import { useRouter } from "next/navigation";
@@ -28,6 +31,7 @@ const CARD_STATE_KEY = "cms-appellations-card-state";
 type CardState = {
   identity: boolean;
   production: boolean;
+  soilTypes: boolean;
   editorial: boolean;
   flags: boolean;
   technical: boolean;
@@ -37,6 +41,7 @@ type CardState = {
 const defaultCardState: CardState = {
   identity: true,
   production: true,
+  soilTypes: true,
   editorial: true,
   flags: true,
   technical: false,
@@ -52,6 +57,7 @@ function loadCardState(): CardState {
     return {
       identity: parsed.identity ?? defaultCardState.identity,
       production: parsed.production ?? defaultCardState.production,
+      soilTypes: parsed.soilTypes ?? defaultCardState.soilTypes,
       editorial: parsed.editorial ?? defaultCardState.editorial,
       flags: parsed.flags ?? defaultCardState.flags,
       // Always closed when entering the page (even if previously expanded).
@@ -379,6 +385,7 @@ type Props = {
   appellation: Appellation | null;
   regions: WineRegion[];
   subregions: WineSubregion[];
+  soilTypes: SoilType[];
   onClose: () => void;
   onDeleted: () => void;
 };
@@ -411,7 +418,14 @@ const emptyForm = (): Appellation => ({
   deleted_at: null,
 });
 
-export function AppellationEditor({ appellation, regions, subregions, onClose, onDeleted }: Props) {
+export function AppellationEditor({
+  appellation,
+  regions,
+  subregions,
+  soilTypes,
+  onClose,
+  onDeleted,
+}: Props) {
   const router = useRouter();
   const isNew = !appellation?.id;
   const [form, setForm] = useState<Appellation>(() => appellation ?? emptyForm());
@@ -426,10 +440,31 @@ export function AppellationEditor({ appellation, regions, subregions, onClose, o
   const [error, setError] = useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [cardState, setCardState] = useState<CardState>(defaultCardState);
+  const [selectedSoilTypeIds, setSelectedSoilTypeIds] = useState<string[]>([]);
+  const [soilQuery, setSoilQuery] = useState("");
 
   useEffect(() => {
     setCardState(loadCardState());
   }, []);
+
+  useEffect(() => {
+    setSelectedSoilTypeIds([]);
+    setSoilQuery("");
+    if (!appellation?.id) return;
+    let active = true;
+    getAppellationSoilLinks(appellation.id)
+      .then((ids) => {
+        if (!active) return;
+        setSelectedSoilTypeIds(ids);
+      })
+      .catch(() => {
+        if (!active) return;
+        setSelectedSoilTypeIds([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, [appellation?.id]);
 
   const toggleCard = useCallback((key: keyof CardState) => {
     setCardState((prev) => {
@@ -504,6 +539,10 @@ export function AppellationEditor({ appellation, regions, subregions, onClose, o
         const res = await createAppellation(payload);
         if (res.error) setError(res.error);
         else {
+          if (res.id) {
+            const linkRes = await setAppellationSoilLinks(res.id, selectedSoilTypeIds);
+            if (linkRes.error) setError(linkRes.error);
+          }
           router.refresh();
           onClose();
         }
@@ -511,6 +550,8 @@ export function AppellationEditor({ appellation, regions, subregions, onClose, o
         const res = await updateAppellation(form.id, payload);
         if (res.error) setError(res.error);
         else {
+          const linkRes = await setAppellationSoilLinks(form.id, selectedSoilTypeIds);
+          if (linkRes.error) setError(linkRes.error);
           router.refresh();
           setSavedFeedback(true);
           setTimeout(() => setSavedFeedback(false), 1500);
@@ -539,6 +580,29 @@ export function AppellationEditor({ appellation, regions, subregions, onClose, o
   };
 
   const panelTitle = form.name_fr?.trim() || form.name_en?.trim() || form.slug?.trim() || "New appellation";
+
+  const filteredSoilTypes = useMemo(() => {
+    const q = soilQuery.trim().toLowerCase();
+    if (!q) return soilTypes;
+    return soilTypes.filter(
+      (s) =>
+        s.name_fr.toLowerCase().includes(q) ||
+        s.name_en?.toLowerCase().includes(q) ||
+        s.slug.toLowerCase().includes(q)
+    );
+  }, [soilTypes, soilQuery]);
+
+  const selectedSoilTypes = useMemo(() => {
+    if (selectedSoilTypeIds.length === 0) return [];
+    const set = new Set(selectedSoilTypeIds);
+    return soilTypes.filter((s) => set.has(s.id));
+  }, [soilTypes, selectedSoilTypeIds]);
+
+  const toggleSoilType = useCallback((id: string) => {
+    setSelectedSoilTypeIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  }, []);
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-white">
@@ -686,6 +750,71 @@ export function AppellationEditor({ appellation, regions, subregions, onClose, o
                   className={inputClass}
                 />
               </div>
+            </div>
+          </div>
+        </CollapsibleCard>
+
+        <CollapsibleCard
+          title="Soil Types"
+          open={cardState.soilTypes}
+          onToggle={() => toggleCard("soilTypes")}
+        >
+          <div className={fieldSpacing}>
+            {selectedSoilTypes.length > 0 ? (
+              <div className="flex flex-wrap gap-1.5">
+                {selectedSoilTypes.map((s) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => toggleSoilType(s.id)}
+                    className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 hover:bg-slate-50"
+                    title="Remove"
+                  >
+                    <span className="truncate max-w-[220px]">{s.name_fr}</span>
+                    <span className="text-slate-400">×</span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="text-xs text-slate-500">No soil types selected.</div>
+            )}
+
+            <input
+              type="search"
+              value={soilQuery}
+              onChange={(e) => setSoilQuery(e.target.value)}
+              placeholder="Search soil types..."
+              className="h-8 w-full rounded border border-slate-200 bg-white px-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200"
+            />
+
+            <div className="max-h-56 overflow-auto rounded border border-slate-200 bg-white">
+              {filteredSoilTypes.length > 0 ? (
+                <ul className="divide-y divide-slate-100">
+                  {filteredSoilTypes.map((s) => {
+                    const checked = selectedSoilTypeIds.includes(s.id);
+                    return (
+                      <li key={s.id}>
+                        <label className="flex cursor-pointer items-center gap-2 px-2 py-1.5 text-sm hover:bg-slate-50">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => toggleSoilType(s.id)}
+                            className="h-4 w-4 rounded border-slate-300"
+                          />
+                          <span className="min-w-0 truncate text-slate-800">
+                            {s.name_fr}
+                          </span>
+                          <span className="ml-auto font-mono text-[11px] text-slate-400">
+                            {s.slug}
+                          </span>
+                        </label>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <div className="p-3 text-sm text-slate-500">No match</div>
+              )}
             </div>
           </div>
         </CollapsibleCard>

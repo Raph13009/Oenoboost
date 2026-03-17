@@ -150,13 +150,15 @@ function formToRow(form: AppellationForm): Record<string, unknown> {
   };
 }
 
-export async function createAppellation(form: AppellationForm): Promise<{ error?: string }> {
+export async function createAppellation(
+  form: AppellationForm
+): Promise<{ error?: string; id?: string }> {
   const supabase = getSupabaseAdmin();
   const row = formToRow(form);
-  const { error } = await supabase.from("appellations").insert(row);
+  const { data, error } = await supabase.from("appellations").insert(row).select("id").single();
   if (error) return { error: error.message };
   revalidatePath("/admin/appellations");
-  return {};
+  return { id: (data as { id: string } | null)?.id };
 }
 
 export async function updateAppellation(
@@ -178,6 +180,37 @@ export async function deleteAppellation(id: string): Promise<{ error?: string }>
     .update({ deleted_at: new Date().toISOString() })
     .eq("id", id);
   if (error) return { error: error.message };
+  revalidatePath("/admin/appellations");
+  return {};
+}
+
+export async function getAppellationSoilLinks(appellationId: string): Promise<string[]> {
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("appellation_soil_links")
+    .select("soil_type_id")
+    .eq("appellation_id", appellationId);
+  if (error) throw new Error(error.message);
+  return (data ?? []).map((r) => (r as { soil_type_id: string }).soil_type_id);
+}
+
+export async function setAppellationSoilLinks(
+  appellationId: string,
+  soilTypeIds: string[]
+): Promise<{ error?: string }> {
+  const supabase = getSupabaseAdmin();
+  const { error: delError } = await supabase
+    .from("appellation_soil_links")
+    .delete()
+    .eq("appellation_id", appellationId);
+  if (delError) return { error: delError.message };
+
+  if (soilTypeIds.length > 0) {
+    const rows = soilTypeIds.map((soil_type_id) => ({ appellation_id: appellationId, soil_type_id }));
+    const { error: insError } = await supabase.from("appellation_soil_links").insert(rows);
+    if (insError) return { error: insError.message };
+  }
+
   revalidatePath("/admin/appellations");
   return {};
 }
