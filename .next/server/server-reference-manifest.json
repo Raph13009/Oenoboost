@@ -1,0 +1,178 @@
+{
+  "node": {
+    "69d87018c063c6bcc7dad1bb2ace0e24836f4236": {
+      "workers": {
+        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2Fpage.tsx%22%2C%5B%22%24%24ACTION_0%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/page": "rsc"
+      }
+    },
+    "7cfe7a2be37f021bc70fa1512f64f79e4d4e9669": {
+      "workers": {
+        "app/admin/(cms)/dashboard/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Flib%2Fauth-actions.ts%22%2C%5B%22logout%22%5D%5D%5D&__client_imported__=true!",
+        "app/admin/(cms)/wine-regions/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Flib%2Fauth-actions.ts%22%2C%5B%22logout%22%5D%5D%5D&__client_imported__=true!",
+        "app/admin/(cms)/wine-subregions/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Flib%2Fauth-actions.ts%22%2C%5B%22logout%22%5D%5D%5D&__client_imported__=true!",
+        "app/admin/(cms)/appellations/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Flib%2Fauth-actions.ts%22%2C%5B%22logout%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/admin/(cms)/dashboard/page": "action-browser",
+        "app/admin/(cms)/wine-regions/page": "action-browser",
+        "app/admin/(cms)/wine-subregions/page": "action-browser",
+        "app/admin/(cms)/appellations/page": "action-browser"
+      }
+    },
+    "0eb766685b328ee2ffa36ca9bf62e8e57c3e6138": {
+      "workers": {
+        "app/admin/(cms)/wine-regions/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%5D&__client_imported__=!",
+        "app/admin/(cms)/wine-subregions/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%5D&__client_imported__=!",
+        "app/admin/(cms)/appellations/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fappellations%2Factions.ts%22%2C%5B%22createAppellation%22%2C%22updateAppellation%22%2C%22getAppellation%22%2C%22getAppellations%22%2C%22deleteAppellation%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/(cms)/wine-regions/page": "rsc",
+        "app/admin/(cms)/wine-subregions/page": "rsc",
+        "app/admin/(cms)/appellations/page": "rsc"
+      }
+    },
+    "2ab854d1ad201aa89a65926d97734ebfa2817d17": {
+      "workers": {
+        "app/admin/(cms)/wine-regions/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%5D&__client_imported__=!",
+        "app/admin/(cms)/wine-subregions/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%5D&__client_imported__=!",
+        "app/admin/(cms)/appellations/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fappellations%2Factions.ts%22%2C%5B%22createAppellation%22%2C%22updateAppellation%22%2C%22getAppellation%22%2C%22getAppellations%22%2C%22deleteAppellation%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/(cms)/wine-regions/page": "rsc",
+        "app/admin/(cms)/wine-subregions/page": "rsc",
+        "app/admin/(cms)/appellations/page": "rsc"
+      }
+    },
+    "6866367ca676f68f8693e64a33ac5170866276fd": {
+      "workers": {
+        "app/admin/(cms)/wine-regions/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%5D&__client_imported__=!",
+        "app/admin/(cms)/wine-subregions/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%5D&__client_imported__=!",
+        "app/admin/(cms)/appellations/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fappellations%2Factions.ts%22%2C%5B%22createAppellation%22%2C%22updateAppellation%22%2C%22getAppellation%22%2C%22getAppellations%22%2C%22deleteAppellation%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/(cms)/wine-regions/page": "rsc",
+        "app/admin/(cms)/wine-subregions/page": "rsc",
+        "app/admin/(cms)/appellations/page": "rsc"
+      }
+    },
+    "ce1330a9f8f9906060ace402145a159e1b2a01c0": {
+      "workers": {
+        "app/admin/(cms)/wine-regions/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%5D&__client_imported__=!",
+        "app/admin/(cms)/wine-subregions/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%5D&__client_imported__=!",
+        "app/admin/(cms)/appellations/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fappellations%2Factions.ts%22%2C%5B%22createAppellation%22%2C%22updateAppellation%22%2C%22getAppellation%22%2C%22getAppellations%22%2C%22deleteAppellation%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/(cms)/wine-regions/page": "rsc",
+        "app/admin/(cms)/wine-subregions/page": "rsc",
+        "app/admin/(cms)/appellations/page": "rsc"
+      }
+    },
+    "d9d286091e6df39b74212683fbc57b6dc1ee9ce8": {
+      "workers": {
+        "app/admin/(cms)/wine-regions/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%5D&__client_imported__=!",
+        "app/admin/(cms)/wine-subregions/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%5D&__client_imported__=!",
+        "app/admin/(cms)/appellations/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fappellations%2Factions.ts%22%2C%5B%22createAppellation%22%2C%22updateAppellation%22%2C%22getAppellation%22%2C%22getAppellations%22%2C%22deleteAppellation%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/(cms)/wine-regions/page": "rsc",
+        "app/admin/(cms)/wine-subregions/page": "rsc",
+        "app/admin/(cms)/appellations/page": "rsc"
+      }
+    },
+    "4e391582041d954bf3dc3de0cb533826cbd08807": {
+      "workers": {
+        "app/admin/(cms)/wine-subregions/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%5D&__client_imported__=!",
+        "app/admin/(cms)/appellations/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fappellations%2Factions.ts%22%2C%5B%22createAppellation%22%2C%22updateAppellation%22%2C%22getAppellation%22%2C%22getAppellations%22%2C%22deleteAppellation%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/(cms)/wine-subregions/page": "rsc",
+        "app/admin/(cms)/appellations/page": "rsc"
+      }
+    },
+    "641fe4f6c665a097bdcdf950cc7990c0ac9deaf8": {
+      "workers": {
+        "app/admin/(cms)/wine-subregions/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%5D&__client_imported__=!",
+        "app/admin/(cms)/appellations/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fappellations%2Factions.ts%22%2C%5B%22createAppellation%22%2C%22updateAppellation%22%2C%22getAppellation%22%2C%22getAppellations%22%2C%22deleteAppellation%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/(cms)/wine-subregions/page": "rsc",
+        "app/admin/(cms)/appellations/page": "rsc"
+      }
+    },
+    "95575abc1eb5f12800108be738771af6fe215290": {
+      "workers": {
+        "app/admin/(cms)/wine-subregions/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%5D&__client_imported__=!",
+        "app/admin/(cms)/appellations/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fappellations%2Factions.ts%22%2C%5B%22createAppellation%22%2C%22updateAppellation%22%2C%22getAppellation%22%2C%22getAppellations%22%2C%22deleteAppellation%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/(cms)/wine-subregions/page": "rsc",
+        "app/admin/(cms)/appellations/page": "rsc"
+      }
+    },
+    "9d0342b4e961f247e48b184d020e504f2299dc05": {
+      "workers": {
+        "app/admin/(cms)/wine-subregions/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%5D&__client_imported__=!",
+        "app/admin/(cms)/appellations/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fappellations%2Factions.ts%22%2C%5B%22createAppellation%22%2C%22updateAppellation%22%2C%22getAppellation%22%2C%22getAppellations%22%2C%22deleteAppellation%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/(cms)/wine-subregions/page": "rsc",
+        "app/admin/(cms)/appellations/page": "rsc"
+      }
+    },
+    "e5ce00869036333d43fad43ab3f6e532fe18c17d": {
+      "workers": {
+        "app/admin/(cms)/wine-subregions/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%5D&__client_imported__=!",
+        "app/admin/(cms)/appellations/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fappellations%2Factions.ts%22%2C%5B%22createAppellation%22%2C%22updateAppellation%22%2C%22getAppellation%22%2C%22getAppellations%22%2C%22deleteAppellation%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/(cms)/wine-subregions/page": "rsc",
+        "app/admin/(cms)/appellations/page": "rsc"
+      }
+    },
+    "0627c0c0076d0fbb9a0312a089d12602b1c3d941": {
+      "workers": {
+        "app/admin/(cms)/appellations/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fappellations%2Factions.ts%22%2C%5B%22createAppellation%22%2C%22updateAppellation%22%2C%22getAppellation%22%2C%22getAppellations%22%2C%22deleteAppellation%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/(cms)/appellations/page": "rsc"
+      }
+    },
+    "0a13f34eac54cbe72ee9e9abef50e6dd322e0b56": {
+      "workers": {
+        "app/admin/(cms)/appellations/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fappellations%2Factions.ts%22%2C%5B%22createAppellation%22%2C%22updateAppellation%22%2C%22getAppellation%22%2C%22getAppellations%22%2C%22deleteAppellation%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/(cms)/appellations/page": "rsc"
+      }
+    },
+    "526ca354cd26287c1e4e78dd03f0c8b315112be9": {
+      "workers": {
+        "app/admin/(cms)/appellations/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fappellations%2Factions.ts%22%2C%5B%22createAppellation%22%2C%22updateAppellation%22%2C%22getAppellation%22%2C%22getAppellations%22%2C%22deleteAppellation%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/(cms)/appellations/page": "rsc"
+      }
+    },
+    "551cd069413235cb61e64543920a07c6695d4604": {
+      "workers": {
+        "app/admin/(cms)/appellations/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fappellations%2Factions.ts%22%2C%5B%22createAppellation%22%2C%22updateAppellation%22%2C%22getAppellation%22%2C%22getAppellations%22%2C%22deleteAppellation%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/(cms)/appellations/page": "rsc"
+      }
+    },
+    "59732780e5c038d6d13b111e8bfcf1e3877c0e12": {
+      "workers": {
+        "app/admin/(cms)/appellations/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-regions%2Factions.ts%22%2C%5B%22getWineRegions%22%2C%22updateWineRegion%22%2C%22getWineRegion%22%2C%22deleteWineRegion%22%2C%22createWineRegion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fwine-subregions%2Factions.ts%22%2C%5B%22createWineSubregion%22%2C%22getWineSubregion%22%2C%22updateWineSubregion%22%2C%22getWineSubregions%22%2C%22deleteWineSubregion%22%5D%5D%2C%5B%22%2FUsers%2Fraphaellevy%2FDesktop%2FOenoboost-1%2Fapp%2Fadmin%2F(cms)%2Fappellations%2Factions.ts%22%2C%5B%22createAppellation%22%2C%22updateAppellation%22%2C%22getAppellation%22%2C%22getAppellations%22%2C%22deleteAppellation%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/(cms)/appellations/page": "rsc"
+      }
+    }
+  },
+  "edge": {},
+  "encryptionKey": "jWp/dGKqb3KswhJgUvCpL35rzSoiHipjc1Hpa7MhdBM="
+}
