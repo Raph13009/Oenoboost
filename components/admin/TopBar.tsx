@@ -4,18 +4,18 @@ import { usePathname } from "next/navigation";
 import { Search, Bell } from "lucide-react";
 
 const pathToTitle: Record<string, string> = {
-  "/admin/dashboard": "Dashboard",
-  "/admin/wine-regions": "Wine Regions",
-  "/admin/wine-subregions": "Wine Subregions",
-  "/admin/appellations": "Appellations",
-  "/admin/grapes": "Grapes",
-  "/admin/soil-types": "Soil Types",
-  "/admin/dictionary": "Dictionary Terms",
-  "/admin/news": "News Articles",
-  "/admin/quiz": "Quiz Questions",
-  "/admin/users": "Users",
-  "/admin/subscriptions": "Subscriptions",
-  "/admin/settings": "Settings",
+  "/admin/dashboard": "Tableau de bord",
+  "/admin/wine-regions": "Régions",
+  "/admin/wine-subregions": "Sous-régions",
+  "/admin/appellations": "AOP",
+  "/admin/grapes": "Cépages",
+  "/admin/soil-types": "Sols",
+  "/admin/dictionary": "Glossaire",
+  "/admin/news": "Actualités",
+  "/admin/quiz": "Questions du quiz",
+  "/admin/users": "Utilisateurs",
+  "/admin/subscriptions": "Abonnements",
+  "/admin/settings": "Paramètres",
 };
 
 function getTitle(pathname: string): string {
@@ -23,7 +23,7 @@ function getTitle(pathname: string): string {
   for (const [path, title] of Object.entries(pathToTitle)) {
     if (pathname.startsWith(path + "/")) return title;
   }
-  return "Dashboard";
+  return "Tableau de bord";
 }
 
 export function TopBar() {
@@ -42,7 +42,7 @@ export function TopBar() {
           <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
           <input
             type="search"
-            placeholder="Search..."
+            placeholder="Rechercher..."
             className="h-8 w-40 rounded-md border border-slate-200 bg-slate-50 pl-8 pr-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200"
           />
         </div>

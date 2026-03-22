@@ -12,8 +12,8 @@ export default async function DictionaryPage() {
 
   return (
     <WorkspacePage
-      title="Dictionary Terms"
-      description="Manage glossary terms. Select a row to edit in the panel."
+      title="Glossaire"
+      description="Gérez les termes du glossaire. Sélectionnez une ligne pour modifier le panneau."
       flushLeft
     >
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">

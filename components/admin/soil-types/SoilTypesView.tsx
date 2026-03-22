@@ -64,7 +64,7 @@ export function SoilTypesView({ soilTypes }: Props) {
           />
         ) : selectedId !== null && isLoadingSoilType ? (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Loading soil type...
+            Chargement du sol...
           </div>
         ) : selectedId !== null && selectedSoilType ? (
           <SoilTypeEditor
@@ -74,11 +74,11 @@ export function SoilTypesView({ soilTypes }: Props) {
           />
         ) : selectedId !== null ? (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Soil type not found.
+            Sol introuvable.
           </div>
         ) : (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Select a soil type or create a new one.
+            Sélectionnez un sol ou créez-en un.
           </div>
         )}
       </div>

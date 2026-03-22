@@ -24,8 +24,8 @@ export default async function UsersPage({ searchParams }: PageProps) {
 
   return (
     <WorkspacePage
-      title="Users"
-      description="View and manage users. Click a row to open details."
+      title="Utilisateurs"
+      description="Consultez et gérez les utilisateurs. Cliquez sur une ligne pour ouvrir le détail."
       flushLeft
     >
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">

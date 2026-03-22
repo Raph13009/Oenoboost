@@ -60,7 +60,7 @@ export function GrapesView({ grapes }: Props) {
           />
         ) : selectedId !== null && isLoadingGrape ? (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Loading grape...
+            Chargement du cépage...
           </div>
         ) : selectedId !== null && selectedGrape ? (
           <GrapeEditor
@@ -70,11 +70,11 @@ export function GrapesView({ grapes }: Props) {
           />
         ) : selectedId !== null ? (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Grape not found.
+            Cépage introuvable.
           </div>
         ) : (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Select a grape or create a new one.
+            Sélectionnez un cépage ou créez-en un.
           </div>
         )}
       </div>

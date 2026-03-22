@@ -179,7 +179,7 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center bg-white p-6 text-sm text-slate-500">
-        Loading…
+        Chargement…
       </div>
     );
   }
@@ -187,15 +187,15 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
   if (!user) {
     return (
       <div className="flex h-full flex-col justify-center bg-white p-6 text-sm text-slate-500">
-        User not found.
+        Utilisateur introuvable.
         <button type="button" onClick={onClose} className="mt-2 text-slate-700 underline">
-          Close
+          Fermer
         </button>
       </div>
     );
   }
 
-  const displayName = [form.first_name, form.last_name].filter(Boolean).join(" ") || form.email || "User";
+  const displayName = [form.first_name, form.last_name].filter(Boolean).join(" ") || form.email || "Utilisateur";
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-white">
@@ -207,7 +207,7 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
             onClick={onClose}
             className="rounded border border-slate-200 px-2.5 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
           >
-            Close
+            Fermer
           </button>
           <button
             type="button"
@@ -217,7 +217,7 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
               savedFeedback ? "bg-emerald-600 text-white" : "bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
             }`}
           >
-            {saving ? "Saving…" : savedFeedback ? "Saved ✓" : "Save"}
+            {saving ? "Enregistrement…" : savedFeedback ? "Enregistré ✓" : "Enregistrer"}
           </button>
         </div>
       </div>
@@ -229,10 +229,10 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
       )}
 
       <div className="flex-1 overflow-auto p-3 space-y-3">
-        <Section title="Identity">
+        <Section title="Identité">
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>first_name</label>
+              <label className={labelClass}>Prénom</label>
               <input
                 value={form.first_name ?? ""}
                 onChange={(e) => update({ first_name: e.target.value || null })}
@@ -240,7 +240,7 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
               />
             </div>
             <div>
-              <label className={labelClass}>last_name</label>
+              <label className={labelClass}>Nom</label>
               <input
                 value={form.last_name ?? ""}
                 onChange={(e) => update({ last_name: e.target.value || null })}
@@ -248,7 +248,7 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className={labelClass}>email</label>
+              <label className={labelClass}>Email</label>
               <input
                 type="email"
                 value={form.email ?? ""}
@@ -257,7 +257,7 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className={labelClass}>avatar_url</label>
+              <label className={labelClass}>URL avatar</label>
               <input
                 value={form.avatar_url ?? ""}
                 onChange={(e) => update({ avatar_url: e.target.value || null })}
@@ -268,10 +268,10 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
           </div>
         </Section>
 
-        <Section title="Account">
+        <Section title="Compte">
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>role</label>
+              <label className={labelClass}>Rôle</label>
               <select
                 value={form.role ?? "user"}
                 onChange={(e) => update({ role: e.target.value })}
@@ -282,7 +282,7 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
               </select>
             </div>
             <div>
-              <label className={labelClass}>plan</label>
+              <label className={labelClass}>Offre</label>
               <select
                 value={form.plan ?? "free"}
                 onChange={(e) => update({ plan: e.target.value })}
@@ -293,7 +293,7 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
               </select>
             </div>
             <div>
-              <label className={labelClass}>plan_expires_at</label>
+              <label className={labelClass}>Offre expire le</label>
               <input
                 type="datetime-local"
                 value={form.plan_expires_at ? new Date(form.plan_expires_at).toISOString().slice(0, 16) : ""}
@@ -304,7 +304,7 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
               />
             </div>
             <div>
-              <label className={labelClass}>level</label>
+              <label className={labelClass}>Niveau</label>
               <select
                 value={form.level ?? "beginner"}
                 onChange={(e) => update({ level: e.target.value })}
@@ -319,10 +319,10 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
           </div>
         </Section>
 
-        <Section title="Activity">
+        <Section title="Activité">
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>streak_days</label>
+              <label className={labelClass}>Jours de série</label>
               <input
                 type="number"
                 min={0}
@@ -339,11 +339,11 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
                   onChange={(e) => update({ is_verified: e.target.checked })}
                   className="h-4 w-4 rounded border-slate-300"
                 />
-                is_verified
+                Compte vérifié
               </label>
             </div>
             <div>
-              <label className={labelClass}>locale</label>
+              <label className={labelClass}>Langue</label>
               <select
                 value={form.locale ?? "fr"}
                 onChange={(e) => update({ locale: e.target.value })}
@@ -356,18 +356,18 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
           </div>
         </Section>
 
-        <CollapsibleSection title="System" open={systemOpen} onToggle={() => setSystemOpen(!systemOpen)}>
+        <CollapsibleSection title="Système" open={systemOpen} onToggle={() => setSystemOpen(!systemOpen)}>
           <dl className="space-y-1.5 text-xs">
             <div>
-              <dt className={labelClass}>created_at</dt>
+              <dt className={labelClass}>Créé le</dt>
               <dd className="text-slate-800">{formatDate(user.created_at)}</dd>
             </div>
             <div>
-              <dt className={labelClass}>updated_at</dt>
+              <dt className={labelClass}>Mis à jour le</dt>
               <dd className="text-slate-800">{formatDate(user.updated_at)}</dd>
             </div>
             <div>
-              <dt className={labelClass}>deleted_at</dt>
+              <dt className={labelClass}>Supprimé le</dt>
               <dd className="text-slate-800">{formatDate(user.deleted_at)}</dd>
             </div>
           </dl>
@@ -379,14 +379,14 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
             onClick={() => setDeactivateModalOpen(true)}
             className="rounded border border-amber-200 px-2.5 py-1.5 text-sm text-amber-800 hover:bg-amber-50"
           >
-            Deactivate user
+            Désactiver l'utilisateur
           </button>
           <button
             type="button"
             onClick={() => setDeleteModalOpen(true)}
             className="rounded border border-red-200 px-2.5 py-1.5 text-sm text-red-700 hover:bg-red-50"
           >
-            Delete user
+            Supprimer l'utilisateur
           </button>
         </div>
       </div>
@@ -394,9 +394,9 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
       <ConfirmDialog
         open={deactivateModalOpen}
         onClose={() => setDeactivateModalOpen(false)}
-        title="Deactivate user"
-        message="This will soft-delete the user. They will no longer appear in the list. You can re-activate later by clearing deleted_at in the database."
-        confirmLabel="Deactivate"
+        title="Désactiver l'utilisateur"
+        message="Cette action effectuera une suppression logique. L'utilisateur n'apparaîtra plus dans la liste."
+        confirmLabel="Désactiver"
         onConfirm={handleDeactivate}
         variant="danger"
         loading={deleting}
@@ -404,9 +404,9 @@ export function UserDetailPanel({ userId, onClose, onDeleted }: Props) {
       <ConfirmDialog
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        title="Delete user"
-        message="Permanently delete this user? This cannot be undone."
-        confirmLabel="Delete"
+        title="Supprimer l'utilisateur"
+        message="Supprimer définitivement cet utilisateur ? Cette action est irréversible."
+        confirmLabel="Supprimer"
         onConfirm={handleDelete}
         variant="danger"
         loading={deleting}

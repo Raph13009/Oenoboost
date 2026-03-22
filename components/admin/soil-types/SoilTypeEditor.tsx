@@ -285,7 +285,7 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
     }
   };
 
-  const panelTitle = form.name_fr?.trim() || form.name_en?.trim() || form.slug?.trim() || "New soil type";
+  const panelTitle = form.name_fr?.trim() || form.name_en?.trim() || form.slug?.trim() || "Nouveau sol";
 
   const textareaClass =
     "min-h-[4rem] w-full resize-none rounded border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900 focus:border-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200";
@@ -312,7 +312,7 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
                 : "bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
             }`}
           >
-            {saving ? "Saving…" : savedFeedback ? "Saved ✓" : "Save"}
+            {saving ? "Enregistrement…" : savedFeedback ? "Enregistré ✓" : "Enregistrer"}
           </button>
           {!isNew && (
             <button
@@ -321,7 +321,7 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
               disabled={deleting}
               className="rounded border border-red-200 px-3 py-1.5 text-sm text-red-700 hover:bg-red-50 disabled:opacity-50"
             >
-              Delete
+              Supprimer
             </button>
           )}
         </div>
@@ -334,14 +334,14 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
       )}
 
       <div className="flex-1 overflow-auto p-3 space-y-4">
-        <CollapsibleCard title="Identity" open={cardState.identity} onToggle={() => toggleCard("identity")}>
+        <CollapsibleCard title="Identité" open={cardState.identity} onToggle={() => toggleCard("identity")}>
           <div className="grid grid-cols-1 gap-x-3 gap-y-2.5 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>name_fr</label>
+              <label className={labelClass}>Nom (FR)</label>
               <input value={form.name_fr} onChange={(e) => update({ name_fr: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>name_en</label>
+              <label className={labelClass}>Nom (EN)</label>
               <input
                 value={form.name_en ?? ""}
                 onChange={(e) => update({ name_en: e.target.value || null })}
@@ -349,11 +349,11 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
               />
             </div>
             <div>
-              <label className={labelClass}>slug</label>
+              <label className={labelClass}>Slug</label>
               <input value={form.slug} onChange={(e) => update({ slug: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>photo_url</label>
+              <label className={labelClass}>URL photo</label>
               <input
                 value={form.photo_url ?? ""}
                 onChange={(e) => update({ photo_url: e.target.value || null })}
@@ -371,7 +371,7 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
           <div className={fieldSpacing}>
             <div className="grid grid-cols-1 gap-x-3 gap-y-2.5 sm:grid-cols-2">
               <div>
-                <label className={labelClass}>geological_origin_fr</label>
+                <label className={labelClass}>Origine géologique (FR)</label>
                 <AutoResizeTextarea
                   value={form.geological_origin_fr ?? ""}
                   onChange={(e) => update({ geological_origin_fr: e.target.value || null })}
@@ -380,7 +380,7 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
                 />
               </div>
               <div>
-                <label className={labelClass}>geological_origin_en</label>
+                <label className={labelClass}>Origine géologique (EN)</label>
                 <AutoResizeTextarea
                   value={form.geological_origin_en ?? ""}
                   onChange={(e) => update({ geological_origin_en: e.target.value || null })}
@@ -389,7 +389,7 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
                 />
               </div>
               <div>
-                <label className={labelClass}>mineral_composition_fr</label>
+                <label className={labelClass}>Composition minérale (FR)</label>
                 <AutoResizeTextarea
                   value={form.mineral_composition_fr ?? ""}
                   onChange={(e) => update({ mineral_composition_fr: e.target.value || null })}
@@ -398,7 +398,7 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
                 />
               </div>
               <div>
-                <label className={labelClass}>mineral_composition_en</label>
+                <label className={labelClass}>Composition minérale (EN)</label>
                 <AutoResizeTextarea
                   value={form.mineral_composition_en ?? ""}
                   onChange={(e) => update({ mineral_composition_en: e.target.value || null })}
@@ -411,14 +411,14 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Distribution"
+          title="Répartition"
           open={cardState.distribution}
           onToggle={() => toggleCard("distribution")}
         >
           <div className={fieldSpacing}>
             <div className="grid grid-cols-1 gap-x-3 gap-y-2.5 sm:grid-cols-2">
               <div>
-                <label className={labelClass}>regions_fr</label>
+                <label className={labelClass}>Régions (FR)</label>
                 <AutoResizeTextarea
                   value={form.regions_fr ?? ""}
                   onChange={(e) => update({ regions_fr: e.target.value || null })}
@@ -427,7 +427,7 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
                 />
               </div>
               <div>
-                <label className={labelClass}>regions_en</label>
+                <label className={labelClass}>Régions (EN)</label>
                 <AutoResizeTextarea
                   value={form.regions_en ?? ""}
                   onChange={(e) => update({ regions_en: e.target.value || null })}
@@ -440,14 +440,14 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Wine impact"
+          title="Impact sur le vin"
           open={cardState.wineImpact}
           onToggle={() => toggleCard("wineImpact")}
         >
           <div className={fieldSpacing}>
             <div className="grid grid-cols-1 gap-x-3 gap-y-2.5 sm:grid-cols-2">
               <div>
-                <label className={labelClass}>wine_influence_fr</label>
+                <label className={labelClass}>Influence sur le vin (FR)</label>
                 <AutoResizeTextarea
                   value={form.wine_influence_fr ?? ""}
                   onChange={(e) => update({ wine_influence_fr: e.target.value || null })}
@@ -456,7 +456,7 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
                 />
               </div>
               <div>
-                <label className={labelClass}>wine_influence_en</label>
+                <label className={labelClass}>Influence sur le vin (EN)</label>
                 <AutoResizeTextarea
                   value={form.wine_influence_en ?? ""}
                   onChange={(e) => update({ wine_influence_en: e.target.value || null })}
@@ -465,7 +465,7 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
                 />
               </div>
               <div>
-                <label className={labelClass}>emblematic_aop_fr</label>
+                <label className={labelClass}>AOP emblématiques (FR)</label>
                 <AutoResizeTextarea
                   value={form.emblematic_aop_fr ?? ""}
                   onChange={(e) => update({ emblematic_aop_fr: e.target.value || null })}
@@ -474,7 +474,7 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
                 />
               </div>
               <div>
-                <label className={labelClass}>emblematic_aop_en</label>
+                <label className={labelClass}>AOP emblématiques (EN)</label>
                 <AutoResizeTextarea
                   value={form.emblematic_aop_en ?? ""}
                   onChange={(e) => update({ emblematic_aop_en: e.target.value || null })}
@@ -486,11 +486,11 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
           </div>
         </CollapsibleCard>
 
-        <CollapsibleCard title="Flags" open={cardState.flags} onToggle={() => toggleCard("flags")}>
+        <CollapsibleCard title="Indicateurs" open={cardState.flags} onToggle={() => toggleCard("flags")}>
           <div className={fieldSpacing}>
             <div className="grid grid-cols-2 gap-x-3 gap-y-2.5">
               <div>
-                <label className={labelClass}>carousel_order</label>
+                <label className={labelClass}>Ordre du carrousel</label>
                 <input
                   type="number"
                   value={form.carousel_order ?? ""}
@@ -514,7 +514,7 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-x-3 gap-y-2.5">
               <div>
-                <label className={labelClass}>status</label>
+                <label className={labelClass}>Statut</label>
                 <div className="relative flex h-8 w-full items-center rounded border border-slate-200 bg-white focus-within:border-slate-300 focus-within:ring-1 focus-within:ring-slate-200">
                   <span className="pointer-events-none absolute left-2.5">
                     <StatusDot status={form.status} />
@@ -532,7 +532,7 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
                 </div>
               </div>
               <div>
-                <label className={labelClass}>published_at</label>
+                <label className={labelClass}>Publié le</label>
                 <input
                   type="datetime-local"
                   value={form.published_at ? new Date(form.published_at).toISOString().slice(0, 16) : ""}
@@ -546,7 +546,7 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
           </div>
         </CollapsibleCard>
 
-        <CollapsibleCard title="Technical data" open={cardState.technical} onToggle={() => toggleCard("technical")}>
+        <CollapsibleCard title="Données techniques" open={cardState.technical} onToggle={() => toggleCard("technical")}>
           <dl className="space-y-2 text-xs">
             <div>
               <dt className={labelClass}>id</dt>
@@ -556,18 +556,18 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
         </CollapsibleCard>
 
         {!isNew && (
-          <CollapsibleCard title="System metadata" open={cardState.metadata} onToggle={() => toggleCard("metadata")}>
+          <CollapsibleCard title="Métadonnées système" open={cardState.metadata} onToggle={() => toggleCard("metadata")}>
             <dl className="space-y-2 text-xs">
               <div>
-                <dt className={labelClass}>created_at</dt>
+                <dt className={labelClass}>Créé le</dt>
                 <dd className="text-slate-800">{formatDate(form.created_at)}</dd>
               </div>
               <div>
-                <dt className={labelClass}>updated_at</dt>
+                <dt className={labelClass}>Mis à jour le</dt>
                 <dd className="text-slate-800">{formatDate(form.updated_at)}</dd>
               </div>
               <div>
-                <dt className={labelClass}>deleted_at</dt>
+                <dt className={labelClass}>Supprimé le</dt>
                 <dd className="text-slate-800">{formatDate(form.deleted_at)}</dd>
               </div>
             </dl>
@@ -578,9 +578,9 @@ export function SoilTypeEditor({ soilType, onClose, onDeleted }: Props) {
       <ConfirmDialog
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        title="Delete soil type"
+        title="Supprimer le sol"
         message="Are you sure you want to delete this soil type? This action will perform a soft delete."
-        confirmLabel="Delete"
+        confirmLabel="Supprimer"
         onConfirm={handleConfirmDelete}
         variant="danger"
         loading={deleting}

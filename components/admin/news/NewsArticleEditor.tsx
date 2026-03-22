@@ -468,7 +468,7 @@ export function NewsArticleEditor({
     form.title_fr?.trim() ||
     form.title_en?.trim() ||
     form.slug?.trim() ||
-    "New article";
+    "Nouvel article";
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-white">
@@ -494,7 +494,7 @@ export function NewsArticleEditor({
                 : "bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
             }`}
           >
-            {saving ? "Saving…" : savedFeedback ? "Saved ✓" : "Save"}
+            {saving ? "Enregistrement…" : savedFeedback ? "Enregistré ✓" : "Enregistrer"}
           </button>
           {!isNew && (
             <button
@@ -503,7 +503,7 @@ export function NewsArticleEditor({
               disabled={deleting}
               className="rounded border border-red-200 px-3 py-1.5 text-sm text-red-700 hover:bg-red-50 disabled:opacity-50"
             >
-              Delete
+              Supprimer
             </button>
           )}
         </div>
@@ -517,13 +517,13 @@ export function NewsArticleEditor({
 
       <div className="flex-1 overflow-auto p-3 space-y-3">
         <CollapsibleCard
-          title="Identity"
+          title="Identité"
           open={cardState.identity}
           onToggle={() => toggleCard("identity")}
         >
           <div className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>title_fr</label>
+              <label className={labelClass}>Titre (FR)</label>
               <input
                 value={form.title_fr}
                 onChange={(e) => update({ title_fr: e.target.value })}
@@ -531,7 +531,7 @@ export function NewsArticleEditor({
               />
             </div>
             <div>
-              <label className={labelClass}>title_en</label>
+              <label className={labelClass}>Titre (EN)</label>
               <input
                 value={form.title_en ?? ""}
                 onChange={(e) => update({ title_en: e.target.value || null })}
@@ -539,7 +539,7 @@ export function NewsArticleEditor({
               />
             </div>
             <div className="sm:col-span-2">
-              <label className={labelClass}>slug</label>
+              <label className={labelClass}>Slug</label>
               <input
                 value={form.slug}
                 onChange={(e) => update({ slug: e.target.value })}
@@ -550,7 +550,7 @@ export function NewsArticleEditor({
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Content"
+          title="Contenu"
           open={cardState.content}
           onToggle={() => toggleCard("content")}
         >
@@ -599,12 +599,12 @@ export function NewsArticleEditor({
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Media"
+          title="Média"
           open={cardState.media}
           onToggle={() => toggleCard("media")}
         >
           <div>
-            <label className={labelClass}>cover_url</label>
+            <label className={labelClass}>URL de couverture</label>
             <input
               value={form.cover_url ?? ""}
               onChange={(e) => update({ cover_url: e.target.value || null })}
@@ -653,7 +653,7 @@ export function NewsArticleEditor({
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Flags"
+          title="Indicateurs"
           open={cardState.flags}
           onToggle={() => toggleCard("flags")}
         >
@@ -671,7 +671,7 @@ export function NewsArticleEditor({
                 <span>is_premium_early</span>
               </label>
               <div>
-                <label className={labelClass}>status</label>
+                <label className={labelClass}>Statut</label>
                 <div className="relative flex h-8 w-full items-center rounded border border-slate-200 bg-white focus-within:border-slate-300 focus-within:ring-1 focus-within:ring-slate-200">
                   <span className="pointer-events-none absolute left-2.5">
                     <StatusDot status={form.status} />
@@ -693,7 +693,7 @@ export function NewsArticleEditor({
               </div>
             </div>
             <div>
-              <label className={labelClass}>published_at</label>
+              <label className={labelClass}>Publié le</label>
               <input
                 type="datetime-local"
                 value={
@@ -715,7 +715,7 @@ export function NewsArticleEditor({
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Technical data"
+          title="Données techniques"
           open={cardState.technical}
           onToggle={() => toggleCard("technical")}
         >
@@ -729,21 +729,21 @@ export function NewsArticleEditor({
 
         {!isNew && (
           <CollapsibleCard
-            title="System metadata"
+            title="Métadonnées système"
             open={cardState.metadata}
             onToggle={() => toggleCard("metadata")}
           >
             <dl className="space-y-1.5 text-xs">
               <div>
-                <dt className={labelClass}>created_at</dt>
+                <dt className={labelClass}>Créé le</dt>
                 <dd className="text-slate-800">{formatDate(form.created_at)}</dd>
               </div>
               <div>
-                <dt className={labelClass}>updated_at</dt>
+                <dt className={labelClass}>Mis à jour le</dt>
                 <dd className="text-slate-800">{formatDate(form.updated_at)}</dd>
               </div>
               <div>
-                <dt className={labelClass}>deleted_at</dt>
+                <dt className={labelClass}>Supprimé le</dt>
                 <dd className="text-slate-800">{formatDate(form.deleted_at)}</dd>
               </div>
             </dl>
@@ -754,9 +754,9 @@ export function NewsArticleEditor({
       <ConfirmDialog
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        title="Delete article"
+        title="Supprimer l'article"
         message="Are you sure you want to delete this article? This action will perform a soft delete."
-        confirmLabel="Delete"
+        confirmLabel="Supprimer"
         onConfirm={handleConfirmDelete}
         variant="danger"
         loading={deleting}

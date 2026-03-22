@@ -88,7 +88,7 @@ export function UsersView({
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-slate-50/50 text-sm text-slate-500">
-            Select a user to view details.
+            Sélectionnez un utilisateur pour voir le détail.
           </div>
         )}
       </div>

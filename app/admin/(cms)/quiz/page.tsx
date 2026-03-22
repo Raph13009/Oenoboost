@@ -12,8 +12,8 @@ export default async function QuizPage() {
 
   return (
     <WorkspacePage
-      title="Quiz Questions"
-      description="Create and manage quiz questions. Select a row to edit."
+      title="Questions du quiz"
+      description="Créez et gérez les questions du quiz. Sélectionnez une ligne pour modifier."
       flushLeft
     >
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">

@@ -60,7 +60,7 @@ export function QuizView({ questions }: Props) {
           />
         ) : selectedId !== null && isLoadingQuestion ? (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Loading question...
+            Chargement de la question...
           </div>
         ) : selectedId !== null && selectedQuestion ? (
           <QuizQuestionEditor
@@ -70,11 +70,11 @@ export function QuizView({ questions }: Props) {
           />
         ) : selectedId !== null ? (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Question not found.
+            Question introuvable.
           </div>
         ) : (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Select a question or create a new one.
+            Sélectionnez une question ou créez-en une.
           </div>
         )}
       </div>

@@ -17,15 +17,6 @@ type Props = {
   onNew: () => void;
 };
 
-function formatDate(s: string) {
-  if (!s) return "—";
-  return new Date(s).toLocaleDateString("fr-FR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "2-digit",
-  });
-}
-
 function StatusDot({ status }: { status: string }) {
   const color =
     status === "published"
@@ -62,12 +53,12 @@ export function QuizQuestionsList({
 
   const themeOptions = useMemo(() => {
     const themes = uniqSorted(questions.map((q) => q.theme));
-    return [{ value: "all", label: "All" }, ...themes.map((t) => ({ value: t, label: t }))];
+    return [{ value: "all", label: "Tous" }, ...themes.map((t) => ({ value: t, label: t }))];
   }, [questions]);
 
   const typeOptions = useMemo(() => {
     const types = uniqSorted(questions.map((q) => q.type));
-    return [{ value: "all", label: "All" }, ...types.map((t) => ({ value: t, label: t }))];
+    return [{ value: "all", label: "Tous" }, ...types.map((t) => ({ value: t, label: t }))];
   }, [questions]);
 
   const filtered = useMemo(() => {
@@ -87,7 +78,7 @@ export function QuizQuestionsList({
   const filters = [
     {
       key: "theme",
-      label: "Theme",
+      label: "Thème",
       value: themeFilter,
       options: themeOptions,
       onChange: setThemeFilter,
@@ -101,7 +92,7 @@ export function QuizQuestionsList({
     },
     {
       key: "status",
-      label: "Status",
+      label: "Statut",
       value: statusFilter,
       options: [...STATUS_FILTER_OPTIONS],
       onChange: setStatusFilter,
@@ -111,7 +102,7 @@ export function QuizQuestionsList({
   return (
     <div className="flex min-h-0 flex-1 flex-col border-r border-slate-200 bg-white">
       <ListPanelHeader
-        searchPlaceholder="Search questions..."
+        searchPlaceholder="Rechercher des questions..."
         searchValue={search}
         onSearchChange={onSearchChange}
         filters={filters}
@@ -121,11 +112,10 @@ export function QuizQuestionsList({
         <table className="w-full text-sm">
           <thead className="sticky top-0 border-b border-slate-200 bg-slate-50 text-left text-xs text-slate-500">
             <tr>
-              <th className="p-2 font-medium">question_fr</th>
-              <th className="w-28 p-2 font-medium">theme</th>
-              <th className="w-24 p-2 font-medium">type</th>
-              <th className="w-24 p-2 font-medium">status</th>
-              <th className="w-24 p-2 font-medium text-right">updated</th>
+              <th className="p-2 font-medium">Question (FR)</th>
+              <th className="w-28 p-2 font-medium">Thème</th>
+              <th className="w-24 p-2 font-medium">Type</th>
+              <th className="w-24 p-2 font-medium">Statut</th>
             </tr>
           </thead>
           <tbody>
@@ -150,13 +140,14 @@ export function QuizQuestionsList({
                     <span className="text-slate-600">{x.status}</span>
                   </span>
                 </td>
-                <td className="p-2 text-right text-slate-500">{formatDate(x.updated_at)}</td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={5} className="p-4 text-center text-sm text-slate-500">
-                  {questions.length === 0 ? "No questions yet." : "No match for search or filters."}
+                <td colSpan={4} className="p-4 text-center text-sm text-slate-500">
+                  {questions.length === 0
+                    ? "Aucune question."
+                    : "Aucun résultat pour cette recherche ou ces filtres."}
                 </td>
               </tr>
             )}

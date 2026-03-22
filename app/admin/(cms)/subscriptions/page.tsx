@@ -27,8 +27,8 @@ export default async function SubscriptionsPage({ searchParams }: PageProps) {
 
   return (
     <WorkspacePage
-      title="Subscriptions"
-      description="View subscriptions and billing. Stripe is source of truth; use for support and debugging."
+      title="Abonnements"
+      description="Consultez les abonnements et la facturation. Stripe reste la source de vérité."
       flushLeft
     >
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">

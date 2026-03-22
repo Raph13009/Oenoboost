@@ -218,7 +218,7 @@ function RegionSelector({
         disabled={disabled}
         className="flex h-8 w-full items-center justify-between rounded border border-slate-200 bg-white px-2 text-left text-sm text-slate-900 focus:border-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200 disabled:opacity-50"
       >
-        <span className="min-w-0 truncate">{selected?.name_fr ?? "Select region…"}</span>
+        <span className="min-w-0 truncate">{selected?.name_fr ?? "Sélectionner une région…"}</span>
         <ChevronDown className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
       </button>
       {open &&
@@ -239,7 +239,7 @@ function RegionSelector({
               type="text"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Search region..."
+              placeholder="Rechercher une région..."
               className="w-full border-b border-slate-200 px-2 py-1.5 text-sm focus:outline-none"
               autoFocus
             />
@@ -262,7 +262,7 @@ function RegionSelector({
                 </li>
               ))}
               {filtered.length === 0 && (
-                <li className="px-2 py-2 text-sm text-slate-500">No match</li>
+                <li className="px-2 py-2 text-sm text-slate-500">Aucun résultat</li>
               )}
             </ul>
           </div>,
@@ -325,7 +325,7 @@ function SubregionSelector({
         disabled={disabled}
         className="flex h-8 w-full items-center justify-between rounded border border-slate-200 bg-white px-2 text-left text-sm text-slate-900 focus:border-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200 disabled:opacity-50"
       >
-        <span className="min-w-0 truncate">{selected?.name_fr ?? "Select subregion…"}</span>
+        <span className="min-w-0 truncate">{selected?.name_fr ?? "Sélectionner une sous-région…"}</span>
         <ChevronDown className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
       </button>
       {open &&
@@ -346,7 +346,7 @@ function SubregionSelector({
               type="text"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Search subregion..."
+              placeholder="Rechercher une sous-région..."
               className="w-full border-b border-slate-200 px-2 py-1.5 text-sm focus:outline-none"
               autoFocus
             />
@@ -369,7 +369,7 @@ function SubregionSelector({
                 </li>
               ))}
               {filtered.length === 0 && (
-                <li className="px-2 py-2 text-sm text-slate-500">No match</li>
+                <li className="px-2 py-2 text-sm text-slate-500">Aucun résultat</li>
               )}
             </ul>
           </div>,
@@ -577,7 +577,7 @@ export function AppellationEditor({
     }
   };
 
-  const panelTitle = form.name_fr?.trim() || form.name_en?.trim() || form.slug?.trim() || "New appellation";
+  const panelTitle = form.name_fr?.trim() || form.name_en?.trim() || form.slug?.trim() || "Nouvelle AOP";
 
   const filteredSoilTypes = useMemo(() => {
     const q = soilQuery.trim().toLowerCase();
@@ -624,7 +624,7 @@ export function AppellationEditor({
                 : "bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
             }`}
           >
-            {saving ? "Saving…" : savedFeedback ? "Saved ✓" : "Save"}
+            {saving ? "Enregistrement…" : savedFeedback ? "Enregistré ✓" : "Enregistrer"}
           </button>
           {!isNew && (
             <button
@@ -633,7 +633,7 @@ export function AppellationEditor({
               disabled={deleting}
               className="rounded border border-red-200 px-3 py-1.5 text-sm text-red-700 hover:bg-red-50 disabled:opacity-50"
             >
-              Delete
+              Supprimer
             </button>
           )}
         </div>
@@ -646,14 +646,14 @@ export function AppellationEditor({
       )}
 
       <div className="flex-1 overflow-auto p-3 space-y-4">
-        <CollapsibleCard title="Identity" open={cardState.identity} onToggle={() => toggleCard("identity")}>
+        <CollapsibleCard title="Identité" open={cardState.identity} onToggle={() => toggleCard("identity")}>
           <div className="grid grid-cols-1 gap-x-3 gap-y-2.5 sm:grid-cols-2">
             <div className="sm:col-span-1">
-              <label className={labelClass}>name_fr</label>
+              <label className={labelClass}>Nom (FR)</label>
               <input value={form.name_fr} onChange={(e) => update({ name_fr: e.target.value })} className={inputClass} />
             </div>
             <div className="sm:col-span-1">
-              <label className={labelClass}>name_en</label>
+              <label className={labelClass}>Nom (EN)</label>
               <input
                 value={form.name_en ?? ""}
                 onChange={(e) => update({ name_en: e.target.value || null })}
@@ -661,11 +661,11 @@ export function AppellationEditor({
               />
             </div>
             <div className="sm:col-span-2">
-              <label className={labelClass}>slug</label>
+              <label className={labelClass}>Slug</label>
               <input value={form.slug} onChange={(e) => update({ slug: e.target.value })} className={inputClass} />
             </div>
             <div className="sm:col-span-1">
-              <label className={labelClass}>region</label>
+              <label className={labelClass}>Région</label>
               <RegionSelector
                 regions={regions}
                 value={regionId}
@@ -677,7 +677,7 @@ export function AppellationEditor({
               />
             </div>
             <div className="sm:col-span-1">
-              <label className={labelClass}>subregion</label>
+              <label className={labelClass}>Sous-région</label>
               <SubregionSelector
                 subregions={subregionsForRegion}
                 value={form.subregion_id}
@@ -689,14 +689,14 @@ export function AppellationEditor({
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Production / key metrics"
+          title="Production / indicateurs clés"
           open={cardState.production}
           onToggle={() => toggleCard("production")}
         >
           <div className={fieldSpacing}>
             <div className="grid grid-cols-2 gap-x-3 gap-y-2.5">
               <div>
-                <label className={labelClass}>area_hectares</label>
+                <label className={labelClass}>Surface (ha)</label>
                 <input
                   type="number"
                   value={form.area_hectares ?? ""}
@@ -705,7 +705,7 @@ export function AppellationEditor({
                 />
               </div>
               <div>
-                <label className={labelClass}>producer_count</label>
+                <label className={labelClass}>Nombre de producteurs</label>
                 <input
                   type="number"
                   value={form.producer_count ?? ""}
@@ -714,7 +714,7 @@ export function AppellationEditor({
                 />
               </div>
               <div>
-                <label className={labelClass}>production_volume_hl</label>
+                <label className={labelClass}>Volume produit (hl)</label>
                 <input
                   type="number"
                   value={form.production_volume_hl ?? ""}
@@ -725,7 +725,7 @@ export function AppellationEditor({
                 />
               </div>
               <div>
-                <label className={labelClass}>price_range_min_eur</label>
+                <label className={labelClass}>Prix min (EUR)</label>
                 <input
                   type="number"
                   step="any"
@@ -737,7 +737,7 @@ export function AppellationEditor({
                 />
               </div>
               <div>
-                <label className={labelClass}>price_range_max_eur</label>
+                <label className={labelClass}>Prix max (EUR)</label>
                 <input
                   type="number"
                   step="any"
@@ -753,7 +753,7 @@ export function AppellationEditor({
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Soil Types"
+          title="Sols"
           open={cardState.soilTypes}
           onToggle={() => toggleCard("soilTypes")}
         >
@@ -766,7 +766,7 @@ export function AppellationEditor({
                     type="button"
                     onClick={() => toggleSoilType(s.id)}
                     className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 hover:bg-slate-50"
-                    title="Remove"
+                    title="Retirer"
                   >
                     <span className="truncate max-w-[220px]">{s.name_fr}</span>
                     <span className="text-slate-400">×</span>
@@ -774,14 +774,14 @@ export function AppellationEditor({
                 ))}
               </div>
             ) : (
-              <div className="text-xs text-slate-500">No soil types selected.</div>
+              <div className="text-xs text-slate-500">Aucun sol sélectionné.</div>
             )}
 
             <input
               type="search"
               value={soilQuery}
               onChange={(e) => setSoilQuery(e.target.value)}
-              placeholder="Search soil types..."
+              placeholder="Rechercher des sols..."
               className="h-8 w-full rounded border border-slate-200 bg-white px-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200"
             />
 
@@ -811,16 +811,16 @@ export function AppellationEditor({
                   })}
                 </ul>
               ) : (
-                <div className="p-3 text-sm text-slate-500">No match</div>
+                <div className="p-3 text-sm text-slate-500">Aucun résultat</div>
               )}
             </div>
           </div>
         </CollapsibleCard>
 
-        <CollapsibleCard title="Editorial" open={cardState.editorial} onToggle={() => toggleCard("editorial")}>
+        <CollapsibleCard title="Éditorial" open={cardState.editorial} onToggle={() => toggleCard("editorial")}>
           <div className={fieldSpacing}>
             <div>
-              <label className={labelClass}>history_fr</label>
+              <label className={labelClass}>Histoire (FR)</label>
               <AutoResizeTextarea
                 value={form.history_fr ?? ""}
                 onChange={(e) => update({ history_fr: e.target.value || null })}
@@ -829,7 +829,7 @@ export function AppellationEditor({
               />
             </div>
             <div>
-              <label className={labelClass}>history_en</label>
+              <label className={labelClass}>Histoire (EN)</label>
               <AutoResizeTextarea
                 value={form.history_en ?? ""}
                 onChange={(e) => update({ history_en: e.target.value || null })}
@@ -838,7 +838,7 @@ export function AppellationEditor({
               />
             </div>
             <div>
-              <label className={labelClass}>colors_grapes_fr</label>
+              <label className={labelClass}>Couleurs / cépages (FR)</label>
               <AutoResizeTextarea
                 value={form.colors_grapes_fr ?? ""}
                 onChange={(e) => update({ colors_grapes_fr: e.target.value || null })}
@@ -847,7 +847,7 @@ export function AppellationEditor({
               />
             </div>
             <div>
-              <label className={labelClass}>colors_grapes_en</label>
+              <label className={labelClass}>Couleurs / cépages (EN)</label>
               <AutoResizeTextarea
                 value={form.colors_grapes_en ?? ""}
                 onChange={(e) => update({ colors_grapes_en: e.target.value || null })}
@@ -856,7 +856,7 @@ export function AppellationEditor({
               />
             </div>
             <div>
-              <label className={labelClass}>soils_description_fr</label>
+              <label className={labelClass}>Description des sols (FR)</label>
               <AutoResizeTextarea
                 value={form.soils_description_fr ?? ""}
                 onChange={(e) => update({ soils_description_fr: e.target.value || null })}
@@ -865,7 +865,7 @@ export function AppellationEditor({
               />
             </div>
             <div>
-              <label className={labelClass}>soils_description_en</label>
+              <label className={labelClass}>Description des sols (EN)</label>
               <AutoResizeTextarea
                 value={form.soils_description_en ?? ""}
                 onChange={(e) => update({ soils_description_en: e.target.value || null })}
@@ -875,7 +875,7 @@ export function AppellationEditor({
             </div>
             <div className="grid grid-cols-2 gap-x-3 gap-y-2.5">
               <div>
-                <label className={labelClass}>status</label>
+              <label className={labelClass}>Statut</label>
                 <div className="relative flex h-8 w-full items-center rounded border border-slate-200 bg-white focus-within:border-slate-300 focus-within:ring-1 focus-within:ring-slate-200">
                   <span className="pointer-events-none absolute left-2.5">
                     <StatusDot status={form.status} />
@@ -893,7 +893,7 @@ export function AppellationEditor({
                 </div>
               </div>
               <div>
-                <label className={labelClass}>published_at</label>
+              <label className={labelClass}>Publié le</label>
                 <input
                   type="datetime-local"
                   value={form.published_at ? new Date(form.published_at).toISOString().slice(0, 16) : ""}
@@ -907,7 +907,7 @@ export function AppellationEditor({
           </div>
         </CollapsibleCard>
 
-        <CollapsibleCard title="Flags" open={cardState.flags} onToggle={() => toggleCard("flags")}>
+        <CollapsibleCard title="Indicateurs" open={cardState.flags} onToggle={() => toggleCard("flags")}>
           <div className={fieldSpacing}>
             <label className="flex items-center gap-2 text-sm text-slate-800">
               <input
@@ -916,23 +916,23 @@ export function AppellationEditor({
                 onChange={(e) => update({ is_premium: e.target.checked })}
                 className="h-4 w-4 rounded border-slate-300"
               />
-              <span>is_premium</span>
+              <span>Premium</span>
             </label>
           </div>
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Technical data"
+          title="Données techniques"
           open={cardState.technical}
           onToggle={() => toggleCard("technical")}
         >
           <dl className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2 text-xs">
             <div>
-              <dt className={labelClass}>subregion_id</dt>
+              <dt className={labelClass}>ID sous-région</dt>
               <dd className="font-mono text-slate-800">{form.subregion_id || "—"}</dd>
             </div>
             <div className="sm:col-span-2">
-              <dt className={labelClass}>geojson</dt>
+              <dt className={labelClass}>GeoJSON</dt>
               <dd className="mt-0.5 font-mono text-slate-600 break-all text-[11px]">
                 {form.geojson != null
                   ? typeof form.geojson === "string"
@@ -943,11 +943,11 @@ export function AppellationEditor({
             </div>
             <div className="sm:col-span-2 grid grid-cols-2 gap-x-3">
               <div>
-                <dt className={labelClass}>centroid_lat</dt>
+              <dt className={labelClass}>Latitude du centroïde</dt>
                 <dd className="text-slate-800">{form.centroid_lat ?? "—"}</dd>
               </div>
               <div>
-                <dt className={labelClass}>centroid_lng</dt>
+                <dt className={labelClass}>Longitude du centroïde</dt>
                 <dd className="text-slate-800">{form.centroid_lng ?? "—"}</dd>
               </div>
             </div>
@@ -955,18 +955,18 @@ export function AppellationEditor({
         </CollapsibleCard>
 
         {!isNew && (
-          <CollapsibleCard title="System metadata" open={cardState.metadata} onToggle={() => toggleCard("metadata")}>
+          <CollapsibleCard title="Métadonnées système" open={cardState.metadata} onToggle={() => toggleCard("metadata")}>
             <dl className="space-y-2 text-xs">
               <div>
-                <dt className={labelClass}>created_at</dt>
+                <dt className={labelClass}>Créé le</dt>
                 <dd className="text-slate-800">{formatDate(form.created_at)}</dd>
               </div>
               <div>
-                <dt className={labelClass}>updated_at</dt>
+                <dt className={labelClass}>Mis à jour le</dt>
                 <dd className="text-slate-800">{formatDate(form.updated_at)}</dd>
               </div>
               <div>
-                <dt className={labelClass}>deleted_at</dt>
+                <dt className={labelClass}>Supprimé le</dt>
                 <dd className="text-slate-800">{formatDate(form.deleted_at)}</dd>
               </div>
             </dl>
@@ -977,9 +977,9 @@ export function AppellationEditor({
       <ConfirmDialog
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        title="Delete appellation"
-        message="Are you sure you want to delete this appellation? This action will perform a soft delete."
-        confirmLabel="Delete"
+        title="Supprimer l'AOP"
+        message="Voulez-vous vraiment supprimer cette AOP ? Cette action effectuera une suppression logique."
+        confirmLabel="Supprimer"
         onConfirm={handleConfirmDelete}
         variant="danger"
         loading={deleting}

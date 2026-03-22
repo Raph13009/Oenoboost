@@ -27,8 +27,8 @@ export default async function WineRegionsPage({
 
   return (
     <WorkspacePage
-      title="Wine Regions"
-      description="Manage wine regions. Select a row to edit in the panel."
+      title="Régions"
+      description="Gérez les régions. Sélectionnez une ligne pour modifier le panneau."
       flushLeft
     >
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">

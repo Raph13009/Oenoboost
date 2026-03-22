@@ -17,12 +17,6 @@ type Props = {
   onNew: () => void;
 };
 
-function formatDate(s: string | null) {
-  if (!s) return "—";
-  const d = new Date(s);
-  return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" });
-}
-
 function StatusDot({ status }: { status: string }) {
   const color =
     status === "published"
@@ -61,7 +55,7 @@ export function GrapesList({ grapes, search, onSearchChange, selectedId, onSelec
 
   const statusFilterConfig = {
     key: "status",
-    label: "Status",
+    label: "Statut",
     value: statusFilter,
     options: [...STATUS_FILTER_OPTIONS],
     onChange: setStatusFilter,
@@ -70,7 +64,7 @@ export function GrapesList({ grapes, search, onSearchChange, selectedId, onSelec
   return (
     <div className="flex min-h-0 flex-1 flex-col border-r border-slate-200 bg-white">
       <ListPanelHeader
-        searchPlaceholder="Search grapes..."
+        searchPlaceholder="Rechercher des cépages..."
         searchValue={search}
         onSearchChange={onSearchChange}
         filters={[statusFilterConfig]}
@@ -80,11 +74,10 @@ export function GrapesList({ grapes, search, onSearchChange, selectedId, onSelec
         <table className="w-full text-sm">
           <thead className="sticky top-0 border-b border-slate-200 bg-slate-50 text-left text-xs text-slate-500">
             <tr>
-              <th className="w-10 pl-4 pr-1 py-2 font-medium" aria-label="Status" />
-              <th className="p-2 font-medium">name_fr</th>
-              <th className="p-2 font-medium">type</th>
-              <th className="p-2 font-medium">origin_country</th>
-              <th className="p-2 font-medium">updated_at</th>
+              <th className="w-10 pl-4 pr-1 py-2 font-medium" aria-label="Statut" />
+              <th className="p-2 font-medium">Nom (FR)</th>
+              <th className="p-2 font-medium">Type</th>
+              <th className="p-2 font-medium">Pays d'origine</th>
             </tr>
           </thead>
           <tbody>
@@ -102,13 +95,14 @@ export function GrapesList({ grapes, search, onSearchChange, selectedId, onSelec
                 <td className="p-2 font-medium text-slate-900">{g.name_fr}</td>
                 <td className="p-2 text-slate-600">{g.type ?? "—"}</td>
                 <td className="p-2 text-slate-600">{g.origin_country ?? "—"}</td>
-                <td className="p-2 text-slate-500">{formatDate(g.updated_at)}</td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={5} className="p-4 text-center text-sm text-slate-500">
-                  {grapes.length === 0 ? "No grapes yet." : "No match for search or filters."}
+                <td colSpan={4} className="p-4 text-center text-sm text-slate-500">
+                  {grapes.length === 0
+                    ? "Aucun cépage."
+                    : "Aucun résultat pour cette recherche ou ces filtres."}
                 </td>
               </tr>
             )}

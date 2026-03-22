@@ -22,12 +22,6 @@ type Props = {
   onPageChange: (page: number) => void;
 };
 
-function formatDate(s: string | null) {
-  if (!s) return "—";
-  const d = new Date(s);
-  return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" });
-}
-
 function StatusDot({ status }: { status: string }) {
   const color =
     status === "published"
@@ -77,7 +71,7 @@ export function RegionsList({
 
   const statusFilterConfig = {
     key: "status",
-    label: "Status",
+    label: "Statut",
     value: statusFilter,
     options: [...STATUS_FILTER_OPTIONS],
     onChange: setStatusFilter,
@@ -86,7 +80,7 @@ export function RegionsList({
   return (
     <div className="flex min-h-0 flex-1 flex-col border-r border-slate-200 bg-white">
       <ListPanelHeader
-        searchPlaceholder="Search regions..."
+        searchPlaceholder="Rechercher des régions..."
         searchValue={search}
         onSearchChange={onSearchChange}
         filters={[statusFilterConfig]}
@@ -104,7 +98,7 @@ export function RegionsList({
             className="inline-flex items-center gap-1 rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white"
           >
             <ChevronLeft className="h-3.5 w-3.5" />
-            Prev
+            Préc.
           </button>
           <button
             type="button"
@@ -112,18 +106,17 @@ export function RegionsList({
             disabled={!hasNext}
             className="inline-flex items-center gap-1 rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white"
           >
-            Next
+            Suiv.
             <ChevronRight className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-auto pb-2">
         <table className="w-full text-sm">
           <thead className="sticky top-0 border-b border-slate-200 bg-slate-50 text-left text-xs text-slate-500">
             <tr>
-              <th className="w-10 pl-4 pr-1 py-2 font-medium" aria-label="Status" />
-              <th className="p-2 font-medium">name_fr</th>
-              <th className="p-2 font-medium">updated_at</th>
+              <th className="w-10 pl-4 pr-1 py-2 font-medium" aria-label="Statut" />
+              <th className="p-2 font-medium">Nom (FR)</th>
             </tr>
           </thead>
           <tbody>
@@ -139,15 +132,14 @@ export function RegionsList({
                   <StatusDot status={r.status} />
                 </td>
                 <td className="p-2 font-medium text-slate-900">{r.name_fr}</td>
-                <td className="p-2 text-slate-500">{formatDate(r.updated_at)}</td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={3} className="p-4 text-center text-sm text-slate-500">
+                <td colSpan={2} className="p-4 text-center text-sm text-slate-500">
                   {regions.length === 0
-                    ? "No regions yet."
-                    : "No match for search or filters."}
+                    ? "Aucune région."
+                    : "Aucun résultat pour cette recherche ou ces filtres."}
                 </td>
               </tr>
             )}

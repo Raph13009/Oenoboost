@@ -132,7 +132,7 @@ export function SubscriptionDetailPanel({ subscriptionId, onClose }: Props) {
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center bg-white p-6 text-sm text-slate-500">
-        Loading…
+        Chargement…
       </div>
     );
   }
@@ -140,9 +140,9 @@ export function SubscriptionDetailPanel({ subscriptionId, onClose }: Props) {
   if (!sub) {
     return (
       <div className="flex h-full flex-col justify-center bg-white p-6 text-sm text-slate-500">
-        Subscription not found.
+        Abonnement introuvable.
         <button type="button" onClick={onClose} className="mt-2 text-slate-700 underline">
-          Close
+          Fermer
         </button>
       </div>
     );
@@ -152,14 +152,14 @@ export function SubscriptionDetailPanel({ subscriptionId, onClose }: Props) {
     <div className="flex h-full flex-col overflow-hidden bg-white">
       <div className="flex shrink-0 items-center justify-between gap-2 border-b border-slate-200 px-4 py-2.5">
         <h2 className="min-w-0 truncate text-base font-semibold text-slate-900">
-          {sub.user?.email ?? sub.stripe_subscription_id ?? "Subscription"}
+          {sub.user?.email ?? sub.stripe_subscription_id ?? "Abonnement"}
         </h2>
         <button
           type="button"
           onClick={onClose}
           className="rounded border border-slate-200 px-2.5 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
         >
-          Close
+          Fermer
         </button>
       </div>
 
@@ -170,10 +170,10 @@ export function SubscriptionDetailPanel({ subscriptionId, onClose }: Props) {
       )}
 
       <div className="flex-1 overflow-auto p-3 space-y-3">
-        <Section title="User">
+        <Section title="Utilisateur">
           <dl className="space-y-2">
             <div>
-              <dt className={labelClass}>Name</dt>
+              <dt className={labelClass}>Nom</dt>
               <dd className={valueClass}>{fullName(sub.user)}</dd>
             </div>
             <div>
@@ -186,14 +186,14 @@ export function SubscriptionDetailPanel({ subscriptionId, onClose }: Props) {
                   href="/admin/users"
                   className="text-sm text-violet-600 hover:underline"
                 >
-                  Open Users page →
+                  Ouvrir la page Utilisateurs →
                 </Link>
               </div>
             )}
           </dl>
         </Section>
 
-        <Section title="Subscription">
+        <Section title="Abonnement">
           <dl className="space-y-2">
             <div>
               <dt className={labelClass}>plan</dt>
@@ -218,7 +218,7 @@ export function SubscriptionDetailPanel({ subscriptionId, onClose }: Props) {
           </dl>
         </Section>
 
-        <Section title="Billing">
+        <Section title="Facturation">
           <dl className="space-y-2">
             <div>
               <dt className={labelClass}>current_period_start</dt>
@@ -235,14 +235,14 @@ export function SubscriptionDetailPanel({ subscriptionId, onClose }: Props) {
           </dl>
         </Section>
 
-        <CollapsibleSection title="System" open={systemOpen} onToggle={() => setSystemOpen(!systemOpen)}>
+        <CollapsibleSection title="Système" open={systemOpen} onToggle={() => setSystemOpen(!systemOpen)}>
           <dl className="space-y-1.5 text-xs">
             <div>
-              <dt className={labelClass}>created_at</dt>
+              <dt className={labelClass}>Créé le</dt>
               <dd className="text-slate-800">{formatDate(sub.created_at)}</dd>
             </div>
             <div>
-              <dt className={labelClass}>updated_at</dt>
+              <dt className={labelClass}>Mis à jour le</dt>
               <dd className="text-slate-800">{formatDate(sub.updated_at)}</dd>
             </div>
           </dl>
@@ -255,7 +255,7 @@ export function SubscriptionDetailPanel({ subscriptionId, onClose }: Props) {
             disabled={refreshLoading}
             className="rounded border border-slate-200 px-2.5 py-1.5 text-sm text-slate-700 hover:bg-slate-50 disabled:opacity-50"
           >
-            {refreshLoading ? "Syncing…" : "Refresh status (sync Stripe)"}
+            {refreshLoading ? "Synchronisation…" : "Rafraîchir le statut (sync Stripe)"}
           </button>
           {sub.status !== "canceled" && sub.status !== "cancelled" && (
             <button
@@ -264,7 +264,7 @@ export function SubscriptionDetailPanel({ subscriptionId, onClose }: Props) {
               disabled={actionLoading}
               className="rounded border border-amber-200 px-2.5 py-1.5 text-sm text-amber-800 hover:bg-amber-50 disabled:opacity-50"
             >
-              Cancel subscription
+              Annuler l'abonnement
             </button>
           )}
         </div>
@@ -273,9 +273,9 @@ export function SubscriptionDetailPanel({ subscriptionId, onClose }: Props) {
       <ConfirmDialog
         open={cancelModalOpen}
         onClose={() => setCancelModalOpen(false)}
-        title="Cancel subscription"
-        message="This will cancel the subscription in Stripe and update the record. The user will lose access at period end. Continue?"
-        confirmLabel="Cancel subscription"
+        title="Annuler l'abonnement"
+        message="Cette action annulera l'abonnement dans Stripe et mettra à jour l'enregistrement. Continuer ?"
+        confirmLabel="Annuler l'abonnement"
         onConfirm={handleCancel}
         variant="danger"
         loading={actionLoading}

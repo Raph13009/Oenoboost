@@ -18,9 +18,12 @@ type Props = {
   subregions: Array<{ id: string; name_fr: string; region_id: string }>;
   soilTypes: Array<{ id: string; name_fr: string; slug: string }>;
   currentPage: number;
+  totalPages: number;
   hasPrev: boolean;
   hasNext: boolean;
   initialSearch: string;
+  initialStatusFilter: string;
+  initialRegionFilter: string;
 };
 
 export function AppellationsView({
@@ -29,11 +32,16 @@ export function AppellationsView({
   subregions,
   soilTypes,
   currentPage,
+  totalPages,
   hasPrev,
   hasNext,
   initialSearch,
+  initialStatusFilter,
+  initialRegionFilter,
 }: Props) {
   const [search, setSearch] = useState(initialSearch);
+  const [statusFilter, setStatusFilter] = useState(initialStatusFilter);
+  const [regionFilter, setRegionFilter] = useState(initialRegionFilter);
   const [selectedId, setSelectedId] = useState<string | "new" | null>(null);
   const [selectedAppellationData, setSelectedAppellationData] = useState<Appellation | null>(null);
   const [isLoadingAppellation, setIsLoadingAppellation] = useState(false);
@@ -42,12 +50,24 @@ export function AppellationsView({
   const showDrawerLoader = useDelayedBusy(isLoadingAppellation, 150);
   const showListLoader = useDelayedBusy(isNavigatingPage, 150);
 
-  const onPageChange = (nextPage: number) => {
+  const buildQueryString = (
+    nextPage: number,
+    nextSearch = search,
+    nextStatus = statusFilter,
+    nextRegion = regionFilter
+  ) => {
     const params = new URLSearchParams();
-    params.set("page", String(nextPage));
-    if (search.trim()) params.set("q", search.trim());
+    if (nextPage > 1) params.set("page", String(nextPage));
+    if (nextSearch.trim()) params.set("q", nextSearch.trim());
+    if (nextStatus !== "all") params.set("status", nextStatus);
+    if (nextRegion !== "all") params.set("region", nextRegion);
+    return params.toString();
+  };
+
+  const onPageChange = (nextPage: number) => {
+    const queryString = buildQueryString(nextPage);
     startPageTransition(() => {
-      router.push(`?${params.toString()}`);
+      router.push(queryString ? `?${queryString}` : "?");
     });
   };
 
@@ -56,27 +76,45 @@ export function AppellationsView({
   }, [initialSearch]);
 
   useEffect(() => {
+    setStatusFilter(initialStatusFilter);
+  }, [initialStatusFilter]);
+
+  useEffect(() => {
+    setRegionFilter(initialRegionFilter);
+  }, [initialRegionFilter]);
+
+  useEffect(() => {
+    if (regionFilter === "all") return;
+    const exists = regions.some((r) => r.id === regionFilter);
+    if (!exists) setRegionFilter("all");
+  }, [regionFilter, regions]);
+
+  useEffect(() => {
     const nextSearch = search.trim();
     const currentSearch = initialSearch.trim();
-    if (nextSearch === currentSearch) return;
+    const sameSearch = nextSearch === currentSearch;
+    if (sameSearch) return;
     const t = window.setTimeout(() => {
-      const params = new URLSearchParams();
-      params.set("page", "1");
-      if (nextSearch) params.set("q", nextSearch);
+      const queryString = buildQueryString(1, nextSearch, statusFilter, regionFilter);
       startPageTransition(() => {
-        router.push(`?${params.toString()}`);
+        router.push(queryString ? `?${queryString}` : "?");
       });
     }, 300);
     return () => window.clearTimeout(t);
-  }, [search, initialSearch, router, startPageTransition]);
+  }, [
+    search,
+    initialSearch,
+    statusFilter,
+    regionFilter,
+    router,
+    startPageTransition,
+  ]);
 
   useEffect(() => {
     if (!hasNext) return;
-    const params = new URLSearchParams();
-    params.set("page", String(currentPage + 1));
-    if (search.trim()) params.set("q", search.trim());
-    router.prefetch(`?${params.toString()}`);
-  }, [currentPage, hasNext, router, search]);
+    const queryString = buildQueryString(currentPage + 1);
+    router.prefetch(queryString ? `?${queryString}` : "?");
+  }, [currentPage, hasNext, router, search, statusFilter, regionFilter]);
 
   useEffect(() => {
     let active = true;
@@ -108,13 +146,29 @@ export function AppellationsView({
         <AppellationsList
           appellations={appellations}
           regions={regions}
-          subregions={subregions}
           search={search}
           onSearchChange={setSearch}
+          statusFilter={statusFilter}
+          onStatusFilterChange={(nextStatus) => {
+            setStatusFilter(nextStatus);
+            const queryString = buildQueryString(1, search, nextStatus);
+            startPageTransition(() => {
+              router.push(queryString ? `?${queryString}` : "?");
+            });
+          }}
+          regionFilter={regionFilter}
+          onRegionFilterChange={(nextRegion) => {
+            setRegionFilter(nextRegion);
+            const queryString = buildQueryString(1, search, statusFilter, nextRegion);
+            startPageTransition(() => {
+              router.push(queryString ? `?${queryString}` : "?");
+            });
+          }}
           selectedId={selectedId === "new" ? null : selectedId}
           onSelect={setSelectedId}
           onNew={() => setSelectedId("new")}
           currentPage={currentPage}
+          totalPages={totalPages}
           hasPrev={hasPrev}
           hasNext={hasNext}
           onPageChange={onPageChange}
@@ -148,11 +202,11 @@ export function AppellationsView({
           />
         ) : selectedId !== null ? (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Appellation not found.
+            AOP introuvable.
           </div>
         ) : (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Select an appellation or create a new one.
+            Sélectionnez une AOP ou créez-en une.
           </div>
         )}
       </div>

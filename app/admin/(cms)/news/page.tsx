@@ -12,8 +12,8 @@ export default async function NewsPage() {
 
   return (
     <WorkspacePage
-      title="News Articles"
-      description="Manage news, guides, and editorial content. Select a row to edit."
+      title="Actualités"
+      description="Gérez les actualités, guides et contenus éditoriaux. Sélectionnez une ligne pour modifier."
       flushLeft
     >
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">

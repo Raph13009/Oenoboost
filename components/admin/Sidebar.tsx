@@ -27,30 +27,30 @@ const RAIL_WIDTH_COLLAPSED = 40; // icon rail when collapsed (fits in 64 - 2*SID
 const LABEL_WIDTH = SIDEBAR_EXPANDED - 2 * SIDEBAR_PX - RAIL_WIDTH; // 152 (content area minus rail)
 
 const nav = [
-  { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+  { label: "Tableau de bord", href: "/admin/dashboard", icon: LayoutDashboard },
   {
     items: [
-      { label: "Wine Regions", href: "/admin/wine-regions", icon: MapPin },
-      { label: "Wine Subregions", href: "/admin/wine-subregions", icon: Layers },
-      { label: "Appellations", href: "/admin/appellations", icon: MapPin },
-      { label: "Grapes", href: "/admin/grapes", icon: Grape },
-      { label: "Soil Types", href: "/admin/soil-types", icon: Leaf },
+      { label: "Régions", href: "/admin/wine-regions", icon: MapPin },
+      { label: "Sous-régions", href: "/admin/wine-subregions", icon: Layers },
+      { label: "AOP", href: "/admin/appellations", icon: MapPin },
+      { label: "Cépages", href: "/admin/grapes", icon: Grape },
+      { label: "Sols", href: "/admin/soil-types", icon: Leaf },
     ],
   },
   {
     items: [
-      { label: "Dictionary Terms", href: "/admin/dictionary", icon: BookOpen },
-      { label: "News Articles", href: "/admin/news", icon: Newspaper },
-      { label: "Quiz Questions", href: "/admin/quiz", icon: ClipboardList },
+      { label: "Glossaire", href: "/admin/dictionary", icon: BookOpen },
+      { label: "Actualités", href: "/admin/news", icon: Newspaper },
+      { label: "Questions du quiz", href: "/admin/quiz", icon: ClipboardList },
     ],
   },
   {
     items: [
-      { label: "Users", href: "/admin/users", icon: Users },
-      { label: "Subscriptions", href: "/admin/subscriptions", icon: CreditCard },
+      { label: "Utilisateurs", href: "/admin/users", icon: Users },
+      { label: "Abonnements", href: "/admin/subscriptions", icon: CreditCard },
     ],
   },
-  { label: "Settings", href: "/admin/settings", icon: Settings },
+  { label: "Paramètres", href: "/admin/settings", icon: Settings },
 ] as const;
 
 function NavLink({
@@ -193,7 +193,7 @@ export function Sidebar({ userEmail }: { userEmail: string }) {
                 className={`min-w-0 truncate whitespace-nowrap overflow-hidden text-left transition-[width] duration-200 ease-out ${labelWidth > 0 ? "pl-2 pr-3" : ""}`}
                 style={{ width: labelWidth }}
               >
-                Logout
+                Déconnexion
               </span>
             </button>
           </form>

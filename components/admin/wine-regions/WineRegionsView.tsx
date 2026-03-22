@@ -82,7 +82,7 @@ export function WineRegionsView({ regions, currentPage, hasPrev, hasNext }: Prop
           />
         ) : selectedId !== null && isLoadingRegion ? (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Loading region...
+            Chargement de la région...
           </div>
         ) : selectedId !== null && selectedRegion ? (
           <RegionEditor
@@ -92,7 +92,7 @@ export function WineRegionsView({ regions, currentPage, hasPrev, hasNext }: Prop
           />
         ) : (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Select a region or create a new one.
+            Sélectionnez une région ou créez-en une.
           </div>
         )}
       </div>

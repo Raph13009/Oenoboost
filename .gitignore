@@ -4,3 +4,12 @@ node_modules
 .DS_Store
 .cursor/mcp.json
 .next
+
+# Local heavy data artifacts
+appellations_raw.json
+appellations_clean.json
+data/aoc/*.shp
+data/aoc/*.dbf
+data/aoc/*.shx
+data/aoc/*.prj
+data/aoc/*.cpg

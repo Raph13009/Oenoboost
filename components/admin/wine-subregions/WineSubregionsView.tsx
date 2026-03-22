@@ -112,7 +112,7 @@ export function WineSubregionsView({
           />
         ) : (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Select a subregion or create a new one.
+            Sélectionnez une sous-région ou créez-en une.
           </div>
         )}
       </div>

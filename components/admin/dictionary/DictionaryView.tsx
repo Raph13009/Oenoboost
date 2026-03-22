@@ -64,7 +64,7 @@ export function DictionaryView({ terms }: Props) {
           />
         ) : selectedId !== null && isLoadingTerm ? (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Loading term...
+            Chargement du terme...
           </div>
         ) : selectedId !== null && selectedTerm ? (
           <DictionaryTermEditor
@@ -74,11 +74,11 @@ export function DictionaryView({ terms }: Props) {
           />
         ) : selectedId !== null ? (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Term not found.
+            Terme introuvable.
           </div>
         ) : (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Select a term or create a new one.
+            Sélectionnez un terme ou créez-en un.
           </div>
         )}
       </div>

@@ -191,7 +191,7 @@ function RegionSelector({
         disabled={disabled}
         className={`flex h-8 w-full items-center justify-between rounded border border-slate-200 bg-white px-2 text-left text-sm text-slate-900 focus:border-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200 disabled:opacity-50`}
       >
-        <span className="min-w-0 truncate">{selected?.name_fr ?? "Select region…"}</span>
+        <span className="min-w-0 truncate">{selected?.name_fr ?? "Sélectionner une région…"}</span>
         <ChevronDown className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
       </button>
       {open &&
@@ -212,7 +212,7 @@ function RegionSelector({
               type="text"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Search region..."
+              placeholder="Rechercher une région..."
               className="w-full border-b border-slate-200 px-2 py-1.5 text-sm focus:outline-none"
               autoFocus
             />
@@ -235,7 +235,7 @@ function RegionSelector({
                 </li>
               ))}
               {filtered.length === 0 && (
-                <li className="px-2 py-2 text-sm text-slate-500">No match</li>
+                <li className="px-2 py-2 text-sm text-slate-500">Aucun résultat</li>
               )}
             </ul>
           </div>,
@@ -380,7 +380,7 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
   };
 
   const panelTitle =
-    form.name_fr?.trim() || form.name_en?.trim() || form.slug?.trim() || "New subregion";
+    form.name_fr?.trim() || form.name_en?.trim() || form.slug?.trim() || "Nouvelle sous-région";
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-white">
@@ -406,7 +406,7 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
                 : "bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
             }`}
           >
-            {saving ? "Saving…" : savedFeedback ? "Saved ✓" : "Save"}
+            {saving ? "Enregistrement…" : savedFeedback ? "Enregistré ✓" : "Enregistrer"}
           </button>
           {!isNew && (
             <button
@@ -415,7 +415,7 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
               disabled={deleting}
               className="rounded border border-red-200 px-3 py-1.5 text-sm text-red-700 hover:bg-red-50 disabled:opacity-50"
             >
-              Delete
+              Supprimer
             </button>
           )}
         </div>
@@ -435,7 +435,7 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
         >
           <div className="grid grid-cols-1 gap-x-3 gap-y-2.5 sm:grid-cols-2">
             <div className="sm:col-span-1">
-              <label className={labelClass}>name_fr</label>
+              <label className={labelClass}>Nom (FR)</label>
               <input
                 value={form.name_fr}
                 onChange={(e) => update({ name_fr: e.target.value })}
@@ -443,7 +443,7 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
               />
             </div>
             <div className="sm:col-span-1">
-              <label className={labelClass}>name_en</label>
+              <label className={labelClass}>Nom (EN)</label>
               <input
                 value={form.name_en ?? ""}
                 onChange={(e) => update({ name_en: e.target.value || null })}
@@ -451,7 +451,7 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
               />
             </div>
             <div className="sm:col-span-2">
-              <label className={labelClass}>slug</label>
+              <label className={labelClass}>Slug</label>
               <input
                 value={form.slug}
                 onChange={(e) => update({ slug: e.target.value })}
@@ -459,7 +459,7 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
               />
             </div>
             <div className="sm:col-span-2">
-              <label className={labelClass}>region</label>
+              <label className={labelClass}>Région</label>
               <RegionSelector
                 regions={regions}
                 value={form.region_id}
@@ -477,7 +477,7 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
         >
           <div className={fieldSpacing}>
             <div>
-              <label className={labelClass}>description_fr</label>
+              <label className={labelClass}>Description (FR)</label>
               <AutoResizeTextarea
                 value={form.description_fr ?? ""}
                 onChange={(e) => update({ description_fr: e.target.value || null })}
@@ -486,7 +486,7 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
               />
             </div>
             <div>
-              <label className={labelClass}>description_en</label>
+              <label className={labelClass}>Description (EN)</label>
               <AutoResizeTextarea
                 value={form.description_en ?? ""}
                 onChange={(e) => update({ description_en: e.target.value || null })}
@@ -496,7 +496,7 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
             </div>
             <div className="grid grid-cols-2 gap-x-3 gap-y-2.5">
               <div>
-                <label className={labelClass}>map_order</label>
+                <label className={labelClass}>Ordre carte</label>
                 <input
                   type="number"
                   value={form.map_order ?? ""}
@@ -509,7 +509,7 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
             </div>
             <div className="grid grid-cols-2 gap-x-3 gap-y-2.5">
               <div>
-                <label className={labelClass}>status</label>
+                <label className={labelClass}>Statut</label>
                 <div className="relative flex h-8 w-full items-center rounded border border-slate-200 bg-white focus-within:border-slate-300 focus-within:ring-1 focus-within:ring-slate-200">
                   <span className="pointer-events-none absolute left-2.5">
                     <StatusDot status={form.status} />
@@ -527,7 +527,7 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
                 </div>
               </div>
               <div>
-                <label className={labelClass}>published_at</label>
+                <label className={labelClass}>Publié le</label>
                 <input
                   type="datetime-local"
                   value={
@@ -546,27 +546,27 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Technical data"
+          title="Données techniques"
           open={cardState.technical}
           onToggle={() => toggleCard("technical")}
         >
           <dl className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2 text-xs">
             <div>
-              <dt className={labelClass}>area_hectares</dt>
+              <dt className={labelClass}>Surface (ha)</dt>
               <dd className="text-slate-800">{form.area_hectares ?? "—"}</dd>
             </div>
             <div className="sm:col-span-2 grid grid-cols-2 gap-x-3">
               <div>
-                <dt className={labelClass}>centroid_lat</dt>
+                <dt className={labelClass}>Latitude du centroïde</dt>
                 <dd className="text-slate-800">{form.centroid_lat ?? "—"}</dd>
               </div>
               <div>
-                <dt className={labelClass}>centroid_lng</dt>
+                <dt className={labelClass}>Longitude du centroïde</dt>
                 <dd className="text-slate-800">{form.centroid_lng ?? "—"}</dd>
               </div>
             </div>
             <div className="sm:col-span-2">
-              <dt className={labelClass}>geojson</dt>
+              <dt className={labelClass}>GeoJSON</dt>
               <dd className="mt-0.5 font-mono text-slate-600 break-all text-[11px]">
                 {form.geojson != null
                   ? typeof form.geojson === "string"
@@ -581,7 +581,7 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
         {/* Section 4 — System metadata (read-only, same structure as Wine Regions) */}
         {!isNew && (
           <CollapsibleCard
-            title="System metadata"
+            title="Métadonnées système"
             open={cardState.metadata}
             onToggle={() => toggleCard("metadata")}
           >
@@ -591,15 +591,15 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
                 <dd className="font-mono text-slate-800">{form.id}</dd>
               </div>
               <div>
-                <dt className={labelClass}>created_at</dt>
+                <dt className={labelClass}>Créé le</dt>
                 <dd className="text-slate-800">{formatDate(form.created_at)}</dd>
               </div>
               <div>
-                <dt className={labelClass}>updated_at</dt>
+                <dt className={labelClass}>Mis à jour le</dt>
                 <dd className="text-slate-800">{formatDate(form.updated_at)}</dd>
               </div>
               <div>
-                <dt className={labelClass}>deleted_at</dt>
+                <dt className={labelClass}>Supprimé le</dt>
                 <dd className="text-slate-800">{formatDate(form.deleted_at)}</dd>
               </div>
             </dl>
@@ -610,9 +610,9 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
       <ConfirmDialog
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        title="Delete subregion"
+        title="Supprimer la sous-région"
         message="Are you sure you want to delete this subregion? This action will perform a soft delete."
-        confirmLabel="Delete"
+        confirmLabel="Supprimer"
         onConfirm={handleConfirmDelete}
         variant="danger"
         loading={deleting}

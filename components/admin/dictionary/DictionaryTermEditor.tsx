@@ -291,7 +291,7 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
   };
 
   const panelTitle =
-    form.term_fr?.trim() || form.term_en?.trim() || form.slug?.trim() || "New term";
+    form.term_fr?.trim() || form.term_en?.trim() || form.slug?.trim() || "Nouveau terme";
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-white">
@@ -317,7 +317,7 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
                 : "bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
             }`}
           >
-            {saving ? "Saving…" : savedFeedback ? "Saved ✓" : "Save"}
+            {saving ? "Enregistrement…" : savedFeedback ? "Enregistré ✓" : "Enregistrer"}
           </button>
           {!isNew && (
             <button
@@ -326,7 +326,7 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
               disabled={deleting}
               className="rounded border border-red-200 px-3 py-1.5 text-sm text-red-700 hover:bg-red-50 disabled:opacity-50"
             >
-              Delete
+              Supprimer
             </button>
           )}
         </div>
@@ -340,13 +340,13 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
 
       <div className="flex-1 overflow-auto p-3 space-y-3">
         <CollapsibleCard
-          title="Identity"
+          title="Identité"
           open={cardState.identity}
           onToggle={() => toggleCard("identity")}
         >
           <div className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>term_fr</label>
+              <label className={labelClass}>Terme (FR)</label>
               <input
                 value={form.term_fr}
                 onChange={(e) => update({ term_fr: e.target.value })}
@@ -354,7 +354,7 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
               />
             </div>
             <div>
-              <label className={labelClass}>term_en</label>
+              <label className={labelClass}>Terme (EN)</label>
               <input
                 value={form.term_en ?? ""}
                 onChange={(e) => update({ term_en: e.target.value || null })}
@@ -362,7 +362,7 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className={labelClass}>slug</label>
+              <label className={labelClass}>Slug</label>
               <input
                 value={form.slug}
                 onChange={(e) => update({ slug: e.target.value })}
@@ -373,13 +373,13 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Definition"
+          title="Définition"
           open={cardState.definition}
           onToggle={() => toggleCard("definition")}
         >
           <div className={fieldSpacing}>
             <div>
-              <label className={labelClass}>definition_fr</label>
+              <label className={labelClass}>Définition (FR)</label>
               <AutoResizeTextarea
                 value={form.definition_fr ?? ""}
                 onChange={(e) => update({ definition_fr: e.target.value || null })}
@@ -389,7 +389,7 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
               />
             </div>
             <div>
-              <label className={labelClass}>definition_en</label>
+              <label className={labelClass}>Définition (EN)</label>
               <AutoResizeTextarea
                 value={form.definition_en ?? ""}
                 onChange={(e) => update({ definition_en: e.target.value || null })}
@@ -402,14 +402,14 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Enrichment"
+          title="Enrichissement"
           open={cardState.enrichment}
           onToggle={() => toggleCard("enrichment")}
         >
           <div className={fieldSpacing}>
             <div className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2">
               <div>
-                <label className={labelClass}>examples_fr</label>
+                <label className={labelClass}>Exemples (FR)</label>
                 <AutoResizeTextarea
                   value={form.examples_fr ?? ""}
                   onChange={(e) => update({ examples_fr: e.target.value || null })}
@@ -418,7 +418,7 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
                 />
               </div>
               <div>
-                <label className={labelClass}>examples_en</label>
+                <label className={labelClass}>Exemples (EN)</label>
                 <AutoResizeTextarea
                   value={form.examples_en ?? ""}
                   onChange={(e) => update({ examples_en: e.target.value || null })}
@@ -427,7 +427,7 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
                 />
               </div>
               <div>
-                <label className={labelClass}>etymology_fr</label>
+                <label className={labelClass}>Étymologie (FR)</label>
                 <AutoResizeTextarea
                   value={form.etymology_fr ?? ""}
                   onChange={(e) => update({ etymology_fr: e.target.value || null })}
@@ -436,7 +436,7 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
                 />
               </div>
               <div>
-                <label className={labelClass}>etymology_en</label>
+                <label className={labelClass}>Étymologie (EN)</label>
                 <AutoResizeTextarea
                   value={form.etymology_en ?? ""}
                   onChange={(e) => update({ etymology_en: e.target.value || null })}
@@ -449,12 +449,12 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Linking"
+          title="Liens"
           open={cardState.linking}
           onToggle={() => toggleCard("linking")}
         >
           <div className={fieldSpacing}>
-            <label className={labelClass}>related_modules (JSON)</label>
+            <label className={labelClass}>Modules liés (JSON)</label>
             <textarea
               value={relatedModulesDisplay(form.related_modules)}
               onChange={(e) => {
@@ -477,7 +477,7 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Flags"
+          title="Indicateurs"
           open={cardState.flags}
           onToggle={() => toggleCard("flags")}
         >
@@ -502,7 +502,7 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
                 <span>is_premium</span>
               </label>
               <div>
-                <label className={labelClass}>free_order</label>
+                <label className={labelClass}>Ordre libre</label>
                 <input
                   type="number"
                   value={form.free_order ?? ""}
@@ -516,7 +516,7 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
                 />
               </div>
               <div>
-                <label className={labelClass}>status</label>
+                <label className={labelClass}>Statut</label>
                 <div className="relative flex h-8 w-full items-center rounded border border-slate-200 bg-white focus-within:border-slate-300 focus-within:ring-1 focus-within:ring-slate-200">
                   <span className="pointer-events-none absolute left-2.5">
                     <StatusDot status={form.status} />
@@ -538,7 +538,7 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
               </div>
             </div>
             <div>
-              <label className={labelClass}>published_at</label>
+              <label className={labelClass}>Publié le</label>
               <input
                 type="datetime-local"
                 value={
@@ -560,7 +560,7 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Technical data"
+          title="Données techniques"
           open={cardState.technical}
           onToggle={() => toggleCard("technical")}
         >
@@ -574,21 +574,21 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
 
         {!isNew && (
           <CollapsibleCard
-            title="System metadata"
+            title="Métadonnées système"
             open={cardState.metadata}
             onToggle={() => toggleCard("metadata")}
           >
             <dl className="space-y-1.5 text-xs">
               <div>
-                <dt className={labelClass}>created_at</dt>
+                <dt className={labelClass}>Créé le</dt>
                 <dd className="text-slate-800">{formatDate(form.created_at)}</dd>
               </div>
               <div>
-                <dt className={labelClass}>updated_at</dt>
+                <dt className={labelClass}>Mis à jour le</dt>
                 <dd className="text-slate-800">{formatDate(form.updated_at)}</dd>
               </div>
               <div>
-                <dt className={labelClass}>deleted_at</dt>
+                <dt className={labelClass}>Supprimé le</dt>
                 <dd className="text-slate-800">{formatDate(form.deleted_at)}</dd>
               </div>
             </dl>
@@ -599,9 +599,9 @@ export function DictionaryTermEditor({ term, onClose, onDeleted }: Props) {
       <ConfirmDialog
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        title="Delete term"
+        title="Supprimer le terme"
         message="Are you sure you want to delete this term? This action will perform a soft delete."
-        confirmLabel="Delete"
+        confirmLabel="Supprimer"
         onConfirm={handleConfirmDelete}
         variant="danger"
         loading={deleting}

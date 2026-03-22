@@ -92,7 +92,7 @@ export function SubscriptionsView({
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-slate-50/50 text-sm text-slate-500">
-            Select a subscription to view details.
+            Sélectionnez un abonnement pour voir le détail.
           </div>
         )}
       </div>

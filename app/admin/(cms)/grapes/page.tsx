@@ -12,8 +12,8 @@ export default async function GrapesPage() {
 
   return (
     <WorkspacePage
-      title="Grapes"
-      description="Manage grapes. Select a row to edit in the panel."
+      title="Cépages"
+      description="Gérez les cépages. Sélectionnez une ligne pour modifier le panneau."
       flushLeft
     >
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">

@@ -50,14 +50,89 @@ export async function getAppellations(options?: {
   limit?: number;
   offset?: number;
   query?: string;
-}): Promise<{ appellations: AppellationListItem[]; hasPrev: boolean; hasNext: boolean }> {
+  status?: string;
+  regionId?: string;
+  subregionId?: string;
+}): Promise<{ appellations: AppellationListItem[]; hasPrev: boolean; hasNext: boolean; totalCount: number }> {
   const supabase = getSupabaseAdmin();
   const limit = Math.min(Math.max(options?.limit ?? 20, 1), 100);
   const offset = Math.max(options?.offset ?? 0, 0);
   const query = (options?.query ?? "").trim();
+  const status = (options?.status ?? "all").trim();
+  const regionId = (options?.regionId ?? "").trim();
+  const subregionId = (options?.subregionId ?? "").trim();
   const fetchLimit = limit + 1;
   const from = offset;
   const to = offset + fetchLimit - 1;
+
+  let allowedAppellationIds: string[] | null = null;
+  if (subregionId && subregionId !== "all") {
+    const { data: subregionLinks, error: subregionLinksError } = await supabase
+      .from("appellation_subregion_links")
+      .select("appellation_id")
+      .eq("subregion_id", subregionId);
+    if (subregionLinksError) throw new Error(subregionLinksError.message);
+    allowedAppellationIds = Array.from(
+      new Set((subregionLinks ?? []).map((row) => (row as { appellation_id: string }).appellation_id))
+    );
+  } else if (regionId && regionId !== "all") {
+    const { data: regionSubregions, error: regionSubregionsError } = await supabase
+      .from("wine_subregions")
+      .select("id")
+      .is("deleted_at", null)
+      .eq("region_id", regionId);
+    if (regionSubregionsError) throw new Error(regionSubregionsError.message);
+
+    const regionSubregionIds = (regionSubregions ?? []).map((row) => (row as { id: string }).id);
+    if (regionSubregionIds.length === 0) {
+      return {
+        appellations: [],
+        hasPrev: offset > 0,
+        hasNext: false,
+        totalCount: 0,
+      };
+    }
+
+    const { data: regionLinks, error: regionLinksError } = await supabase
+      .from("appellation_subregion_links")
+      .select("appellation_id")
+      .in("subregion_id", regionSubregionIds);
+    if (regionLinksError) throw new Error(regionLinksError.message);
+
+    allowedAppellationIds = Array.from(
+      new Set((regionLinks ?? []).map((row) => (row as { appellation_id: string }).appellation_id))
+    );
+  }
+
+  if (Array.isArray(allowedAppellationIds) && allowedAppellationIds.length === 0) {
+    return {
+      appellations: [],
+      hasPrev: offset > 0,
+      hasNext: false,
+      totalCount: 0,
+    };
+  }
+
+  let countQuery = supabase
+    .from("appellations")
+    .select("id", { count: "exact", head: true })
+    .is("deleted_at", null);
+
+  if (query) {
+    const escaped = query.replaceAll(",", " ");
+    countQuery = countQuery.or(
+      `name_fr.ilike.%${escaped}%,name_en.ilike.%${escaped}%,slug.ilike.%${escaped}%`
+    );
+  }
+  if (status && status !== "all") {
+    countQuery = countQuery.eq("status", status);
+  }
+  if (Array.isArray(allowedAppellationIds)) {
+    countQuery = countQuery.in("id", allowedAppellationIds);
+  }
+  const { count, error: countError } = await countQuery;
+  if (countError) throw new Error(countError.message);
+  const totalCount = count ?? 0;
 
   let queryBuilder = supabase
     .from("appellations")
@@ -69,6 +144,14 @@ export async function getAppellations(options?: {
     queryBuilder = queryBuilder.or(
       `name_fr.ilike.%${escaped}%,name_en.ilike.%${escaped}%,slug.ilike.%${escaped}%`
     );
+  }
+
+  if (status && status !== "all") {
+    queryBuilder = queryBuilder.eq("status", status);
+  }
+
+  if (Array.isArray(allowedAppellationIds)) {
+    queryBuilder = queryBuilder.in("id", allowedAppellationIds);
   }
 
   const { data, error } = await queryBuilder
@@ -86,6 +169,7 @@ export async function getAppellations(options?: {
       appellations: [],
       hasPrev,
       hasNext,
+      totalCount,
     };
   }
 
@@ -115,6 +199,7 @@ export async function getAppellations(options?: {
       })) as AppellationListItem[],
       hasPrev,
       hasNext,
+      totalCount,
     };
   }
 
@@ -161,6 +246,7 @@ export async function getAppellations(options?: {
     }) as AppellationListItem[],
     hasPrev,
     hasNext,
+    totalCount,
   };
 }
 

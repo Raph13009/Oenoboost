@@ -62,7 +62,7 @@ export function DictionaryList({
 
   const statusFilterConfig = {
     key: "status",
-    label: "Status",
+    label: "Statut",
     value: statusFilter,
     options: [...STATUS_FILTER_OPTIONS],
     onChange: setStatusFilter,
@@ -71,7 +71,7 @@ export function DictionaryList({
   return (
     <div className="flex min-h-0 flex-1 flex-col border-r border-slate-200 bg-white">
       <ListPanelHeader
-        searchPlaceholder="Search terms..."
+        searchPlaceholder="Rechercher des termes..."
         searchValue={search}
         onSearchChange={onSearchChange}
         filters={[statusFilterConfig]}
@@ -81,8 +81,8 @@ export function DictionaryList({
         <table className="w-full text-sm">
           <thead className="sticky top-0 border-b border-slate-200 bg-slate-50 text-left text-xs text-slate-500">
             <tr>
-              <th className="p-2 font-medium">term_fr</th>
-              <th className="w-20 p-2 font-medium text-right">status</th>
+              <th className="p-2 font-medium">Terme (FR)</th>
+              <th className="w-20 p-2 font-medium text-right">Statut</th>
             </tr>
           </thead>
           <tbody>
@@ -104,7 +104,7 @@ export function DictionaryList({
                     )}
                     {t.is_word_of_day && (
                       <span className="shrink-0 rounded bg-sky-100 px-1.5 py-0.5 text-[10px] font-medium text-sky-800">
-                        Word of day
+                        Mot du jour
                       </span>
                     )}
                   </div>
@@ -120,7 +120,9 @@ export function DictionaryList({
             {filtered.length === 0 && (
               <tr>
                 <td colSpan={2} className="p-4 text-center text-sm text-slate-500">
-                  {terms.length === 0 ? "No terms yet." : "No match for search or filters."}
+                  {terms.length === 0
+                    ? "Aucun terme."
+                    : "Aucun résultat pour cette recherche ou ces filtres."}
                 </td>
               </tr>
             )}

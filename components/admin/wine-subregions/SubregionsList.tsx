@@ -27,12 +27,6 @@ type Props = {
   isLoadingList?: boolean;
 };
 
-function formatDate(s: string | null) {
-  if (!s) return "—";
-  const d = new Date(s);
-  return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" });
-}
-
 function StatusDot({ status }: { status: string }) {
   const color =
     status === "published"
@@ -89,19 +83,19 @@ export function SubregionsList({
 
   const statusFilterConfig = {
     key: "status",
-    label: "Status",
+    label: "Statut",
     value: statusFilter,
     options: [...STATUS_FILTER_OPTIONS],
     onChange: setStatusFilter,
   };
 
   const regionOptions = [
-    { value: "all", label: "All" },
+    { value: "all", label: "Toutes" },
     ...regions.map((r) => ({ value: r.id, label: r.name_fr })),
   ];
   const regionFilterConfig = {
     key: "region",
-    label: "Region",
+    label: "Région",
     value: regionFilter,
     options: regionOptions,
     onChange: setRegionFilter,
@@ -110,7 +104,7 @@ export function SubregionsList({
   return (
     <div className="flex min-h-0 flex-1 flex-col border-r border-slate-200 bg-white">
       <ListPanelHeader
-        searchPlaceholder="Search subregions..."
+        searchPlaceholder="Rechercher des sous-régions..."
         searchValue={search}
         onSearchChange={onSearchChange}
         filters={[statusFilterConfig, regionFilterConfig]}
@@ -128,7 +122,7 @@ export function SubregionsList({
             className="inline-flex items-center gap-1 rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white"
           >
             <ChevronLeft className="h-3.5 w-3.5" />
-            Prev
+            Préc.
           </button>
           <button
             type="button"
@@ -136,22 +130,21 @@ export function SubregionsList({
             disabled={!hasNext}
             className="inline-flex items-center gap-1 rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white"
           >
-            Next
+            Suiv.
             <ChevronRight className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
-      <div className={`flex-1 overflow-hidden transition-opacity duration-200 ${isLoadingList ? "opacity-70" : "opacity-100"}`}>
+      <div className={`flex-1 overflow-auto pb-2 transition-opacity duration-200 ${isLoadingList ? "opacity-70" : "opacity-100"}`}>
         {isLoadingList ? (
           <TableSkeleton rows={8} columns={4} />
         ) : (
         <table className="w-full text-sm">
           <thead className="sticky top-0 border-b border-slate-200 bg-slate-50 text-left text-xs text-slate-500">
             <tr>
-              <th className="w-10 pl-4 pr-1 py-2 font-medium" aria-label="Status" />
-              <th className="p-2 font-medium">name_fr</th>
-              <th className="p-2 font-medium">region</th>
-              <th className="p-2 font-medium">updated_at</th>
+              <th className="w-10 pl-4 pr-1 py-2 font-medium" aria-label="Statut" />
+              <th className="p-2 font-medium">Nom (FR)</th>
+              <th className="p-2 font-medium">Région</th>
             </tr>
           </thead>
           <tbody>
@@ -168,15 +161,14 @@ export function SubregionsList({
                 </td>
                 <td className="p-2 font-medium text-slate-900">{r.name_fr}</td>
                 <td className="p-2 text-slate-600">{r.region_name_fr ?? "—"}</td>
-                <td className="p-2 text-slate-500">{formatDate(r.updated_at)}</td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={4} className="p-4 text-center text-sm text-slate-500">
+                <td colSpan={3} className="p-4 text-center text-sm text-slate-500">
                   {subregions.length === 0
-                    ? "No subregions yet."
-                    : "No match for search or filters."}
+                    ? "Aucune sous-région."
+                    : "Aucun résultat pour cette recherche ou ces filtres."}
                 </td>
               </tr>
             )}

@@ -3,8 +3,8 @@ import { WorkspacePage } from "@/components/admin/WorkspacePage";
 export default function DashboardPage() {
   return (
     <WorkspacePage
-      title="Dashboard"
-      description="Overview of your CMS content and activity."
+      title="Tableau de bord"
+      description="Vue d'ensemble du contenu et de l'activité du CMS."
     />
   );
 }

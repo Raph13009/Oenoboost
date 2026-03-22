@@ -239,7 +239,7 @@ export function RegionEditor({ region, onClose, onDeleted }: Props) {
     }
   };
 
-  const panelTitle = form.name_fr?.trim() || form.name_en?.trim() || form.slug?.trim() || "New region";
+  const panelTitle = form.name_fr?.trim() || form.name_en?.trim() || form.slug?.trim() || "Nouvelle région";
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-white">
@@ -265,7 +265,7 @@ export function RegionEditor({ region, onClose, onDeleted }: Props) {
                 : "bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
             }`}
           >
-            {saving ? "Saving…" : savedFeedback ? "Saved ✓" : "Save"}
+            {saving ? "Enregistrement…" : savedFeedback ? "Enregistré ✓" : "Enregistrer"}
           </button>
         </div>
       </div>
@@ -277,13 +277,13 @@ export function RegionEditor({ region, onClose, onDeleted }: Props) {
       <div className="flex-1 overflow-auto p-3 space-y-4">
         {/* Section 1 — Identity */}
         <CollapsibleCard
-          title="Identity"
+          title="Identité"
           open={cardState.identity}
           onToggle={() => toggleCard("identity")}
         >
           <div className="grid grid-cols-1 gap-x-3 gap-y-2.5 sm:grid-cols-2">
             <div className="sm:col-span-1">
-              <label className={labelClass}>name_fr</label>
+              <label className={labelClass}>Nom (FR)</label>
               <input
                 value={form.name_fr}
                 onChange={(e) => update({ name_fr: e.target.value })}
@@ -291,7 +291,7 @@ export function RegionEditor({ region, onClose, onDeleted }: Props) {
               />
             </div>
             <div className="sm:col-span-1">
-              <label className={labelClass}>name_en</label>
+              <label className={labelClass}>Nom (EN)</label>
               <input
                 value={form.name_en}
                 onChange={(e) => update({ name_en: e.target.value })}
@@ -299,7 +299,7 @@ export function RegionEditor({ region, onClose, onDeleted }: Props) {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className={labelClass}>slug</label>
+              <label className={labelClass}>Slug</label>
               <input
                 value={form.slug}
                 onChange={(e) => update({ slug: e.target.value })}
@@ -317,7 +317,7 @@ export function RegionEditor({ region, onClose, onDeleted }: Props) {
         >
           <div className={fieldSpacing}>
               <div>
-                <label className={labelClass}>main_grapes_fr</label>
+                <label className={labelClass}>Cépages principaux (FR)</label>
                 <AutoResizeTextarea
                   value={form.main_grapes_fr ?? ""}
                   onChange={(e) => update({ main_grapes_fr: e.target.value || null })}
@@ -326,7 +326,7 @@ export function RegionEditor({ region, onClose, onDeleted }: Props) {
                 />
               </div>
               <div>
-                <label className={labelClass}>main_grapes_en</label>
+                <label className={labelClass}>Cépages principaux (EN)</label>
                 <AutoResizeTextarea
                   value={form.main_grapes_en ?? ""}
                   onChange={(e) => update({ main_grapes_en: e.target.value || null })}
@@ -336,7 +336,7 @@ export function RegionEditor({ region, onClose, onDeleted }: Props) {
               </div>
               <div className="grid grid-cols-2 gap-x-3 gap-y-2.5">
                 <div>
-                  <label className={labelClass}>color_hex</label>
+                  <label className={labelClass}>Couleur (HEX)</label>
                   <input
                     value={form.color_hex ?? ""}
                     onChange={(e) => update({ color_hex: e.target.value || null })}
@@ -345,7 +345,7 @@ export function RegionEditor({ region, onClose, onDeleted }: Props) {
                   />
                 </div>
                 <div>
-                  <label className={labelClass}>map_order</label>
+                  <label className={labelClass}>Ordre carte</label>
                   <input
                     type="number"
                     value={form.map_order ?? ""}
@@ -358,7 +358,7 @@ export function RegionEditor({ region, onClose, onDeleted }: Props) {
               </div>
               <div className="grid grid-cols-2 gap-x-3 gap-y-2.5">
                 <div>
-                  <label className={labelClass}>status</label>
+                  <label className={labelClass}>Statut</label>
                   <div className="relative flex h-8 w-full items-center rounded border border-slate-200 bg-white focus-within:border-slate-300 focus-within:ring-1 focus-within:ring-slate-200">
                     <span className="pointer-events-none absolute left-2.5">
                       <StatusDot status={form.status} />
@@ -376,7 +376,7 @@ export function RegionEditor({ region, onClose, onDeleted }: Props) {
                   </div>
                 </div>
                 <div>
-                  <label className={labelClass}>published_at</label>
+                  <label className={labelClass}>Publié le</label>
                   <input
                     type="datetime-local"
                     value={
@@ -396,35 +396,35 @@ export function RegionEditor({ region, onClose, onDeleted }: Props) {
 
         {/* Section 3 — Technical (read-only) */}
         <CollapsibleCard
-          title="Technical data"
+          title="Données techniques"
           open={cardState.technical}
           onToggle={() => toggleCard("technical")}
         >
           <dl className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2 text-xs">
                 <div>
-                  <dt className={labelClass}>department_count</dt>
+                  <dt className={labelClass}>Nombre de départements</dt>
                   <dd className="text-slate-800">{form.department_count ?? "—"}</dd>
                 </div>
                 <div>
-                  <dt className={labelClass}>area_hectares</dt>
+                  <dt className={labelClass}>Surface (ha)</dt>
                   <dd className="text-slate-800">{form.area_hectares ?? "—"}</dd>
                 </div>
                 <div>
-                  <dt className={labelClass}>total_production_hl</dt>
+                  <dt className={labelClass}>Production totale (hl)</dt>
                   <dd className="text-slate-800">{form.total_production_hl ?? "—"}</dd>
                 </div>
                 <div className="sm:col-span-2 grid grid-cols-2 gap-x-3">
                   <div>
-                    <dt className={labelClass}>centroid_lat</dt>
+                    <dt className={labelClass}>Latitude du centroïde</dt>
                     <dd className="text-slate-800">{form.centroid_lat ?? "—"}</dd>
                   </div>
                   <div>
-                    <dt className={labelClass}>centroid_lng</dt>
+                    <dt className={labelClass}>Longitude du centroïde</dt>
                     <dd className="text-slate-800">{form.centroid_lng ?? "—"}</dd>
                   </div>
                 </div>
                 <div className="sm:col-span-2">
-                  <dt className={labelClass}>geojson</dt>
+                  <dt className={labelClass}>GeoJSON</dt>
                   <dd className="mt-0.5 font-mono text-slate-600 break-all text-[11px]">
                     {form.geojson != null
                       ? typeof form.geojson === "string"
@@ -439,7 +439,7 @@ export function RegionEditor({ region, onClose, onDeleted }: Props) {
         {/* Section 4 — System metadata (read-only) */}
         {!isNew && (
           <CollapsibleCard
-            title="System metadata"
+            title="Métadonnées système"
             open={cardState.metadata}
             onToggle={() => toggleCard("metadata")}
           >
@@ -449,15 +449,15 @@ export function RegionEditor({ region, onClose, onDeleted }: Props) {
                 <dd className="font-mono text-slate-800">{form.id}</dd>
               </div>
               <div>
-                <dt className={labelClass}>created_at</dt>
+                <dt className={labelClass}>Créé le</dt>
                 <dd className="text-slate-800">{formatDate(form.created_at)}</dd>
               </div>
               <div>
-                <dt className={labelClass}>updated_at</dt>
+                <dt className={labelClass}>Mis à jour le</dt>
                 <dd className="text-slate-800">{formatDate(form.updated_at)}</dd>
               </div>
               <div>
-                <dt className={labelClass}>deleted_at</dt>
+                <dt className={labelClass}>Supprimé le</dt>
                 <dd className="text-slate-800">{formatDate(form.deleted_at)}</dd>
               </div>
             </dl>

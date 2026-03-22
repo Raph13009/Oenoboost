@@ -60,7 +60,7 @@ export function NewsView({ articles }: Props) {
           />
         ) : selectedId !== null && isLoadingArticle ? (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Loading article...
+            Chargement de l'article...
           </div>
         ) : selectedId !== null && selectedArticle ? (
           <NewsArticleEditor
@@ -70,11 +70,11 @@ export function NewsView({ articles }: Props) {
           />
         ) : selectedId !== null ? (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Article not found.
+            Article introuvable.
           </div>
         ) : (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
-            Select an article or create a new one.
+            Sélectionnez un article ou créez-en un.
           </div>
         )}
       </div>

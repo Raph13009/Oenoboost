@@ -280,7 +280,7 @@ export function QuizQuestionEditor({ question, onClose, onDeleted }: Props) {
     }
   };
 
-  const panelTitle = form.question_fr.trim() || "New question";
+  const panelTitle = form.question_fr.trim() || "Nouvelle question";
 
   const optionRow = (key: OptKey, label: string) => {
     const isCorrect = form.correct_option === key;
@@ -353,7 +353,7 @@ export function QuizQuestionEditor({ question, onClose, onDeleted }: Props) {
                 : "bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
             }`}
           >
-            {saving ? "Saving…" : savedFeedback ? "Saved ✓" : "Save"}
+            {saving ? "Enregistrement…" : savedFeedback ? "Enregistré ✓" : "Enregistrer"}
           </button>
           {!isNew && (
             <button
@@ -362,7 +362,7 @@ export function QuizQuestionEditor({ question, onClose, onDeleted }: Props) {
               disabled={deleting}
               className="rounded border border-red-200 px-3 py-1.5 text-sm text-red-700 hover:bg-red-50 disabled:opacity-50"
             >
-              Delete
+              Supprimer
             </button>
           )}
         </div>
@@ -378,7 +378,7 @@ export function QuizQuestionEditor({ question, onClose, onDeleted }: Props) {
         <CollapsibleCard title="Question" open={cardState.question} onToggle={() => toggleCard("question")}>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>question_fr</label>
+              <label className={labelClass}>Question (FR)</label>
               <AutoResizeTextarea
                 value={form.question_fr}
                 onChange={(e) => update({ question_fr: e.target.value })}
@@ -387,7 +387,7 @@ export function QuizQuestionEditor({ question, onClose, onDeleted }: Props) {
               />
             </div>
             <div>
-              <label className={labelClass}>question_en</label>
+              <label className={labelClass}>Question (EN)</label>
               <AutoResizeTextarea
                 value={form.question_en}
                 onChange={(e) => update({ question_en: e.target.value })}
@@ -398,7 +398,7 @@ export function QuizQuestionEditor({ question, onClose, onDeleted }: Props) {
           </div>
         </CollapsibleCard>
 
-        <CollapsibleCard title="Answers" open={cardState.answers} onToggle={() => toggleCard("answers")}>
+        <CollapsibleCard title="Réponses" open={cardState.answers} onToggle={() => toggleCard("answers")}>
           <div className="space-y-2">
             {optionRow("a", "A")}
             {optionRow("b", "B")}
@@ -411,13 +411,13 @@ export function QuizQuestionEditor({ question, onClose, onDeleted }: Props) {
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Explanation"
+          title="Explication"
           open={cardState.explanation}
           onToggle={() => toggleCard("explanation")}
         >
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>explanation_fr</label>
+              <label className={labelClass}>Explication (FR)</label>
               <AutoResizeTextarea
                 value={form.explanation_fr ?? ""}
                 onChange={(e) => update({ explanation_fr: e.target.value || null })}
@@ -426,7 +426,7 @@ export function QuizQuestionEditor({ question, onClose, onDeleted }: Props) {
               />
             </div>
             <div>
-              <label className={labelClass}>explanation_en</label>
+              <label className={labelClass}>Explication (EN)</label>
               <AutoResizeTextarea
                 value={form.explanation_en ?? ""}
                 onChange={(e) => update({ explanation_en: e.target.value || null })}
@@ -444,7 +444,7 @@ export function QuizQuestionEditor({ question, onClose, onDeleted }: Props) {
         >
           <div className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-3">
             <div>
-              <label className={labelClass}>theme</label>
+              <label className={labelClass}>Thème</label>
               <input
                 value={form.theme ?? ""}
                 onChange={(e) => update({ theme: e.target.value || null })}
@@ -453,7 +453,7 @@ export function QuizQuestionEditor({ question, onClose, onDeleted }: Props) {
               />
             </div>
             <div>
-              <label className={labelClass}>type</label>
+              <label className={labelClass}>Type</label>
               <div className="relative flex h-8 w-full items-center rounded border border-slate-200 bg-white focus-within:border-slate-300 focus-within:ring-1 focus-within:ring-slate-200">
                 <select
                   value={form.type}
@@ -470,7 +470,7 @@ export function QuizQuestionEditor({ question, onClose, onDeleted }: Props) {
               </div>
             </div>
             <div>
-              <label className={labelClass}>related_module</label>
+              <label className={labelClass}>Module lié</label>
               <input
                 value={form.related_module ?? ""}
                 onChange={(e) => update({ related_module: e.target.value || null })}
@@ -482,13 +482,13 @@ export function QuizQuestionEditor({ question, onClose, onDeleted }: Props) {
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Scheduling"
+          title="Planification"
           open={cardState.scheduling}
           onToggle={() => toggleCard("scheduling")}
         >
           <div className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>scheduled_date</label>
+              <label className={labelClass}>Date planifiée</label>
               <input
                 type="date"
                 value={form.scheduled_date ?? ""}
@@ -499,7 +499,7 @@ export function QuizQuestionEditor({ question, onClose, onDeleted }: Props) {
           </div>
         </CollapsibleCard>
 
-        <CollapsibleCard title="Flags" open={cardState.flags} onToggle={() => toggleCard("flags")}>
+        <CollapsibleCard title="Indicateurs" open={cardState.flags} onToggle={() => toggleCard("flags")}>
           <div className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-3">
             <label className="flex items-center gap-2 text-sm text-slate-800">
               <input
@@ -511,7 +511,7 @@ export function QuizQuestionEditor({ question, onClose, onDeleted }: Props) {
               <span>is_premium</span>
             </label>
             <div>
-              <label className={labelClass}>status</label>
+              <label className={labelClass}>Statut</label>
               <div className="relative flex h-8 w-full items-center rounded border border-slate-200 bg-white focus-within:border-slate-300 focus-within:ring-1 focus-within:ring-slate-200">
                 <span className="pointer-events-none absolute left-2.5">
                   <StatusDot status={form.status} />
@@ -533,14 +533,14 @@ export function QuizQuestionEditor({ question, onClose, onDeleted }: Props) {
           </div>
         </CollapsibleCard>
 
-        <CollapsibleCard title="System fields" open={cardState.system} onToggle={() => toggleCard("system")}>
+        <CollapsibleCard title="Champs système" open={cardState.system} onToggle={() => toggleCard("system")}>
           <dl className="space-y-2 text-xs">
             <div>
-              <dt className={labelClass}>created_at</dt>
+              <dt className={labelClass}>Créé le</dt>
               <dd className="text-slate-800">{form.created_at ? formatDate(form.created_at) : "—"}</dd>
             </div>
             <div>
-              <dt className={labelClass}>updated_at</dt>
+              <dt className={labelClass}>Mis à jour le</dt>
               <dd className="text-slate-800">{form.updated_at ? formatDate(form.updated_at) : "—"}</dd>
             </div>
           </dl>
@@ -550,9 +550,9 @@ export function QuizQuestionEditor({ question, onClose, onDeleted }: Props) {
       <ConfirmDialog
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        title="Delete question"
+        title="Supprimer la question"
         message="Are you sure you want to delete this question? This action is permanent."
-        confirmLabel="Delete"
+        confirmLabel="Supprimer"
         onConfirm={handleConfirmDelete}
         variant="danger"
         loading={deleting}

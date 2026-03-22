@@ -291,7 +291,7 @@ export function GrapeEditor({ grape, onClose, onDeleted }: Props) {
     }
   };
 
-  const panelTitle = form.name_fr?.trim() || form.name_en?.trim() || form.slug?.trim() || "New grape";
+  const panelTitle = form.name_fr?.trim() || form.name_en?.trim() || form.slug?.trim() || "Nouveau cépage";
 
   const textareaClass =
     "min-h-[4rem] w-full resize-none rounded border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900 focus:border-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200";
@@ -318,7 +318,7 @@ export function GrapeEditor({ grape, onClose, onDeleted }: Props) {
                 : "bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
             }`}
           >
-            {saving ? "Saving…" : savedFeedback ? "Saved ✓" : "Save"}
+            {saving ? "Enregistrement…" : savedFeedback ? "Enregistré ✓" : "Enregistrer"}
           </button>
           {!isNew && (
             <button
@@ -327,7 +327,7 @@ export function GrapeEditor({ grape, onClose, onDeleted }: Props) {
               disabled={deleting}
               className="rounded border border-red-200 px-3 py-1.5 text-sm text-red-700 hover:bg-red-50 disabled:opacity-50"
             >
-              Delete
+              Supprimer
             </button>
           )}
         </div>
@@ -340,14 +340,14 @@ export function GrapeEditor({ grape, onClose, onDeleted }: Props) {
       )}
 
       <div className="flex-1 overflow-auto p-3 space-y-4">
-        <CollapsibleCard title="Identity" open={cardState.identity} onToggle={() => toggleCard("identity")}>
+        <CollapsibleCard title="Identité" open={cardState.identity} onToggle={() => toggleCard("identity")}>
           <div className="grid grid-cols-1 gap-x-3 gap-y-2.5 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>name_fr</label>
+              <label className={labelClass}>Nom (FR)</label>
               <input value={form.name_fr} onChange={(e) => update({ name_fr: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>name_en</label>
+              <label className={labelClass}>Nom (EN)</label>
               <input
                 value={form.name_en ?? ""}
                 onChange={(e) => update({ name_en: e.target.value || null })}
@@ -355,11 +355,11 @@ export function GrapeEditor({ grape, onClose, onDeleted }: Props) {
               />
             </div>
             <div>
-              <label className={labelClass}>slug</label>
+              <label className={labelClass}>Slug</label>
               <input value={form.slug} onChange={(e) => update({ slug: e.target.value })} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>type</label>
+              <label className={labelClass}>Type</label>
               <input
                 value={form.type ?? ""}
                 onChange={(e) => update({ type: e.target.value || null })}
@@ -369,11 +369,11 @@ export function GrapeEditor({ grape, onClose, onDeleted }: Props) {
           </div>
         </CollapsibleCard>
 
-        <CollapsibleCard title="Origin" open={cardState.origin} onToggle={() => toggleCard("origin")}>
+        <CollapsibleCard title="Origine" open={cardState.origin} onToggle={() => toggleCard("origin")}>
           <div className={fieldSpacing}>
             <div className="grid grid-cols-1 gap-x-3 gap-y-2.5 sm:grid-cols-2">
               <div>
-                <label className={labelClass}>origin_country</label>
+                <label className={labelClass}>Pays d'origine</label>
                 <input
                   value={form.origin_country ?? ""}
                   onChange={(e) => update({ origin_country: e.target.value || null })}
@@ -381,7 +381,7 @@ export function GrapeEditor({ grape, onClose, onDeleted }: Props) {
                 />
               </div>
               <div>
-                <label className={labelClass}>origin_region_fr</label>
+                <label className={labelClass}>Région d'origine (FR)</label>
                 <input
                   value={form.origin_region_fr ?? ""}
                   onChange={(e) => update({ origin_region_fr: e.target.value || null })}
@@ -389,7 +389,7 @@ export function GrapeEditor({ grape, onClose, onDeleted }: Props) {
                 />
               </div>
               <div>
-                <label className={labelClass}>origin_region_en</label>
+                <label className={labelClass}>Région d'origine (EN)</label>
                 <input
                   value={form.origin_region_en ?? ""}
                   onChange={(e) => update({ origin_region_en: e.target.value || null })}
@@ -397,7 +397,7 @@ export function GrapeEditor({ grape, onClose, onDeleted }: Props) {
                 />
               </div>
               <div>
-                <label className={labelClass}>origin_latitude</label>
+                <label className={labelClass}>Latitude d'origine</label>
                 <input
                   type="number"
                   step="any"
@@ -407,7 +407,7 @@ export function GrapeEditor({ grape, onClose, onDeleted }: Props) {
                 />
               </div>
               <div>
-                <label className={labelClass}>origin_longitude</label>
+                <label className={labelClass}>Longitude d'origine</label>
                 <input
                   type="number"
                   step="any"
@@ -420,62 +420,62 @@ export function GrapeEditor({ grape, onClose, onDeleted }: Props) {
           </div>
         </CollapsibleCard>
 
-        <CollapsibleCard title="Editorial" open={cardState.editorial} onToggle={() => toggleCard("editorial")}>
+        <CollapsibleCard title="Éditorial" open={cardState.editorial} onToggle={() => toggleCard("editorial")}>
           <div className={fieldSpacing}>
             <div className="grid grid-cols-1 gap-x-3 gap-y-2.5 sm:grid-cols-2">
               <div>
-                <label className={labelClass}>history_fr</label>
+                <label className={labelClass}>Histoire (FR)</label>
                 <AutoResizeTextarea value={form.history_fr ?? ""} onChange={(e) => update({ history_fr: e.target.value || null })} minRows={2} className={textareaClass} />
               </div>
               <div>
-                <label className={labelClass}>history_en</label>
+                <label className={labelClass}>Histoire (EN)</label>
                 <AutoResizeTextarea value={form.history_en ?? ""} onChange={(e) => update({ history_en: e.target.value || null })} minRows={2} className={textareaClass} />
               </div>
               <div>
-                <label className={labelClass}>crossings_fr</label>
+                <label className={labelClass}>Croisements (FR)</label>
                 <AutoResizeTextarea value={form.crossings_fr ?? ""} onChange={(e) => update({ crossings_fr: e.target.value || null })} minRows={2} className={textareaClass} />
               </div>
               <div>
-                <label className={labelClass}>crossings_en</label>
+                <label className={labelClass}>Croisements (EN)</label>
                 <AutoResizeTextarea value={form.crossings_en ?? ""} onChange={(e) => update({ crossings_en: e.target.value || null })} minRows={2} className={textareaClass} />
               </div>
               <div>
-                <label className={labelClass}>production_regions_fr</label>
+                <label className={labelClass}>Régions de production (FR)</label>
                 <AutoResizeTextarea value={form.production_regions_fr ?? ""} onChange={(e) => update({ production_regions_fr: e.target.value || null })} minRows={2} className={textareaClass} />
               </div>
               <div>
-                <label className={labelClass}>production_regions_en</label>
+                <label className={labelClass}>Régions de production (EN)</label>
                 <AutoResizeTextarea value={form.production_regions_en ?? ""} onChange={(e) => update({ production_regions_en: e.target.value || null })} minRows={2} className={textareaClass} />
               </div>
               <div>
-                <label className={labelClass}>viticultural_traits_fr</label>
+                <label className={labelClass}>Traits viticoles (FR)</label>
                 <AutoResizeTextarea value={form.viticultural_traits_fr ?? ""} onChange={(e) => update({ viticultural_traits_fr: e.target.value || null })} minRows={2} className={textareaClass} />
               </div>
               <div>
-                <label className={labelClass}>viticultural_traits_en</label>
+                <label className={labelClass}>Traits viticoles (EN)</label>
                 <AutoResizeTextarea value={form.viticultural_traits_en ?? ""} onChange={(e) => update({ viticultural_traits_en: e.target.value || null })} minRows={2} className={textareaClass} />
               </div>
               <div>
-                <label className={labelClass}>tasting_traits_fr</label>
+                <label className={labelClass}>Traits de dégustation (FR)</label>
                 <AutoResizeTextarea value={form.tasting_traits_fr ?? ""} onChange={(e) => update({ tasting_traits_fr: e.target.value || null })} minRows={2} className={textareaClass} />
               </div>
               <div>
-                <label className={labelClass}>tasting_traits_en</label>
+                <label className={labelClass}>Traits de dégustation (EN)</label>
                 <AutoResizeTextarea value={form.tasting_traits_en ?? ""} onChange={(e) => update({ tasting_traits_en: e.target.value || null })} minRows={2} className={textareaClass} />
               </div>
               <div>
-                <label className={labelClass}>emblematic_wines_fr</label>
+                <label className={labelClass}>Vins emblématiques (FR)</label>
                 <AutoResizeTextarea value={form.emblematic_wines_fr ?? ""} onChange={(e) => update({ emblematic_wines_fr: e.target.value || null })} minRows={2} className={textareaClass} />
               </div>
               <div>
-                <label className={labelClass}>emblematic_wines_en</label>
+                <label className={labelClass}>Vins emblématiques (EN)</label>
                 <AutoResizeTextarea value={form.emblematic_wines_en ?? ""} onChange={(e) => update({ emblematic_wines_en: e.target.value || null })} minRows={2} className={textareaClass} />
               </div>
             </div>
           </div>
         </CollapsibleCard>
 
-        <CollapsibleCard title="Flags" open={cardState.flags} onToggle={() => toggleCard("flags")}>
+        <CollapsibleCard title="Indicateurs" open={cardState.flags} onToggle={() => toggleCard("flags")}>
           <div className={fieldSpacing}>
             <label className="flex items-center gap-2 text-sm text-slate-800">
               <input
@@ -488,7 +488,7 @@ export function GrapeEditor({ grape, onClose, onDeleted }: Props) {
             </label>
             <div className="grid grid-cols-2 gap-x-3 gap-y-2.5">
               <div>
-                <label className={labelClass}>status</label>
+                <label className={labelClass}>Statut</label>
                 <div className="relative flex h-8 w-full items-center rounded border border-slate-200 bg-white focus-within:border-slate-300 focus-within:ring-1 focus-within:ring-slate-200">
                   <span className="pointer-events-none absolute left-2.5">
                     <StatusDot status={form.status} />
@@ -506,7 +506,7 @@ export function GrapeEditor({ grape, onClose, onDeleted }: Props) {
                 </div>
               </div>
               <div>
-                <label className={labelClass}>published_at</label>
+                <label className={labelClass}>Publié le</label>
                 <input
                   type="datetime-local"
                   value={form.published_at ? new Date(form.published_at).toISOString().slice(0, 16) : ""}
@@ -518,7 +518,7 @@ export function GrapeEditor({ grape, onClose, onDeleted }: Props) {
           </div>
         </CollapsibleCard>
 
-        <CollapsibleCard title="Technical data" open={cardState.technical} onToggle={() => toggleCard("technical")}>
+        <CollapsibleCard title="Données techniques" open={cardState.technical} onToggle={() => toggleCard("technical")}>
           <dl className="space-y-2 text-xs">
             <div>
               <dt className={labelClass}>id</dt>
@@ -528,18 +528,18 @@ export function GrapeEditor({ grape, onClose, onDeleted }: Props) {
         </CollapsibleCard>
 
         {!isNew && (
-          <CollapsibleCard title="System metadata" open={cardState.metadata} onToggle={() => toggleCard("metadata")}>
+          <CollapsibleCard title="Métadonnées système" open={cardState.metadata} onToggle={() => toggleCard("metadata")}>
             <dl className="space-y-2 text-xs">
               <div>
-                <dt className={labelClass}>created_at</dt>
+                <dt className={labelClass}>Créé le</dt>
                 <dd className="text-slate-800">{formatDate(form.created_at)}</dd>
               </div>
               <div>
-                <dt className={labelClass}>updated_at</dt>
+                <dt className={labelClass}>Mis à jour le</dt>
                 <dd className="text-slate-800">{formatDate(form.updated_at)}</dd>
               </div>
               <div>
-                <dt className={labelClass}>deleted_at</dt>
+                <dt className={labelClass}>Supprimé le</dt>
                 <dd className="text-slate-800">{formatDate(form.deleted_at)}</dd>
               </div>
             </dl>
@@ -550,9 +550,9 @@ export function GrapeEditor({ grape, onClose, onDeleted }: Props) {
       <ConfirmDialog
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        title="Delete grape"
+        title="Supprimer le cépage"
         message="Are you sure you want to delete this grape? This action will perform a soft delete."
-        confirmLabel="Delete"
+        confirmLabel="Supprimer"
         onConfirm={handleConfirmDelete}
         variant="danger"
         loading={deleting}

@@ -12,8 +12,8 @@ export default async function SoilTypesPage() {
 
   return (
     <WorkspacePage
-      title="Soil Types"
-      description="Manage soil types. Select a row to edit in the panel."
+      title="Sols"
+      description="Gérez les sols. Sélectionnez une ligne pour modifier le panneau."
       flushLeft
     >
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">

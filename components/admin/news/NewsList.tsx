@@ -17,15 +17,6 @@ type Props = {
   onNew: () => void;
 };
 
-function formatDate(s: string | null) {
-  if (!s) return "—";
-  return new Date(s).toLocaleDateString("fr-FR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "2-digit",
-  });
-}
-
 function StatusDot({ status }: { status: string }) {
   const color =
     status === "published"
@@ -71,7 +62,7 @@ export function NewsList({
 
   const statusFilterConfig = {
     key: "status",
-    label: "Status",
+    label: "Statut",
     value: statusFilter,
     options: [...STATUS_FILTER_OPTIONS],
     onChange: setStatusFilter,
@@ -80,7 +71,7 @@ export function NewsList({
   return (
     <div className="flex min-h-0 flex-1 flex-col border-r border-slate-200 bg-white">
       <ListPanelHeader
-        searchPlaceholder="Search articles..."
+        searchPlaceholder="Rechercher des articles..."
         searchValue={search}
         onSearchChange={onSearchChange}
         filters={[statusFilterConfig]}
@@ -90,10 +81,9 @@ export function NewsList({
         <table className="w-full text-sm">
           <thead className="sticky top-0 border-b border-slate-200 bg-slate-50 text-left text-xs text-slate-500">
             <tr>
-              <th className="p-2 font-medium">title_fr</th>
-              <th className="w-20 p-2 font-medium">content_type</th>
-              <th className="w-20 p-2 font-medium">status</th>
-              <th className="w-24 p-2 font-medium text-right">updated_at</th>
+              <th className="p-2 font-medium">Titre (FR)</th>
+              <th className="w-20 p-2 font-medium">Type</th>
+              <th className="w-20 p-2 font-medium">Statut</th>
             </tr>
           </thead>
           <tbody>
@@ -112,7 +102,7 @@ export function NewsList({
                     </span>
                     {a.is_premium_early && (
                       <span className="shrink-0 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-800">
-                        Premium early
+                        Premium anticipé
                       </span>
                     )}
                   </div>
@@ -124,17 +114,14 @@ export function NewsList({
                     <span className="text-slate-600">{a.status}</span>
                   </span>
                 </td>
-                <td className="p-2 text-right text-slate-500">
-                  {formatDate(a.updated_at)}
-                </td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={4} className="p-4 text-center text-sm text-slate-500">
+                <td colSpan={3} className="p-4 text-center text-sm text-slate-500">
                   {articles.length === 0
-                    ? "No articles yet."
-                    : "No match for search or filters."}
+                    ? "Aucun article."
+                    : "Aucun résultat pour cette recherche ou ces filtres."}
                 </td>
               </tr>
             )}

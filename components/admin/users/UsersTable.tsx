@@ -76,7 +76,7 @@ export function UsersTable({
       <div className="flex shrink-0 flex-wrap items-center gap-3 border-b border-slate-200 px-4 py-3">
         <input
           type="search"
-          placeholder="Search by name or email..."
+          placeholder="Rechercher par nom ou email..."
           value={localSearch}
           onChange={(e) => handleSearchInput(e.target.value)}
           className="h-9 min-w-[200px] flex-1 rounded border border-slate-200 px-3 text-sm focus:border-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200"
@@ -86,10 +86,10 @@ export function UsersTable({
             value={planFilter}
             onChange={(e) => onPlanFilterChange(e.target.value)}
             className="h-9 appearance-none rounded border border-slate-200 bg-white pl-2.5 pr-8 text-sm text-slate-700 focus:border-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200"
-            aria-label="Filter by plan"
+            aria-label="Filtrer par offre"
           >
-            <option value="all">All plans</option>
-            <option value="free">Free</option>
+            <option value="all">Toutes les offres</option>
+            <option value="free">Gratuit</option>
             <option value="premium">Premium</option>
           </select>
           <ChevronDown className="pointer-events-none absolute right-2.5 h-4 w-4 text-slate-400" aria-hidden />
@@ -99,18 +99,18 @@ export function UsersTable({
             value={levelFilter}
             onChange={(e) => onLevelFilterChange(e.target.value)}
             className="h-9 appearance-none rounded border border-slate-200 bg-white pl-2.5 pr-8 text-sm text-slate-700 focus:border-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200"
-            aria-label="Filter by level"
+            aria-label="Filtrer par niveau"
           >
-            <option value="all">All levels</option>
-            <option value="beginner">Beginner</option>
+            <option value="all">Tous les niveaux</option>
+            <option value="beginner">Débutant</option>
             <option value="amateur">Amateur</option>
-            <option value="enthusiast">Enthusiast</option>
+            <option value="enthusiast">Passionné</option>
             <option value="expert">Expert</option>
           </select>
           <ChevronDown className="pointer-events-none absolute right-2.5 h-4 w-4 text-slate-400" aria-hidden />
         </div>
         {isPending && (
-          <span className="text-xs text-slate-500">Updating…</span>
+          <span className="text-xs text-slate-500">Mise à jour…</span>
         )}
       </div>
 
@@ -118,12 +118,12 @@ export function UsersTable({
         <table className="w-full text-sm">
           <thead className="sticky top-0 z-10 border-b border-slate-200 bg-slate-50 text-left text-xs font-medium text-slate-500">
             <tr>
-              <th className="p-3 font-medium">User</th>
-              <th className="w-24 p-3 font-medium">Plan</th>
-              <th className="w-28 p-3 font-medium">Level</th>
-              <th className="w-24 p-3 font-medium">Streak</th>
-              <th className="w-28 p-3 font-medium">Status</th>
-              <th className="w-28 p-3 font-medium text-right">Created</th>
+              <th className="p-3 font-medium">Utilisateur</th>
+              <th className="w-24 p-3 font-medium">Offre</th>
+              <th className="w-28 p-3 font-medium">Niveau</th>
+              <th className="w-24 p-3 font-medium">Série</th>
+              <th className="w-28 p-3 font-medium">Statut</th>
+              <th className="w-28 p-3 font-medium text-right">Créé le</th>
             </tr>
           </thead>
           <tbody>
@@ -174,7 +174,7 @@ export function UsersTable({
                 </td>
                 <td className="p-3">
                   <span className="text-slate-700">
-                    🔥 {u.streak_days} {u.streak_days === 1 ? "day" : "days"}
+                    🔥 {u.streak_days} {u.streak_days === 1 ? "jour" : "jours"}
                   </span>
                 </td>
                 <td className="p-3">
@@ -186,7 +186,7 @@ export function UsersTable({
                       aria-hidden
                     />
                     <span className={u.is_verified ? "text-slate-700" : "text-slate-500"}>
-                      {u.is_verified ? "Verified" : "Not verified"}
+                      {u.is_verified ? "Vérifié" : "Non vérifié"}
                     </span>
                   </span>
                 </td>
@@ -196,7 +196,7 @@ export function UsersTable({
             {users.length === 0 && (
               <tr>
                 <td colSpan={6} className="p-8 text-center text-slate-500">
-                  No users match your filters.
+                  Aucun utilisateur ne correspond aux filtres.
                 </td>
               </tr>
             )}
@@ -208,7 +208,7 @@ export function UsersTable({
       {totalPages > 1 && (
         <div className="flex shrink-0 items-center justify-between border-t border-slate-200 px-4 py-2">
           <span className="text-xs text-slate-500">
-            {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, total)} of {total}
+            {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, total)} sur {total}
           </span>
           <div className="flex items-center gap-1">
             <button
@@ -216,19 +216,19 @@ export function UsersTable({
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage <= 1}
               className="flex h-8 w-8 items-center justify-center rounded text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:hover:bg-transparent"
-              aria-label="Previous page"
+              aria-label="Page précédente"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
             <span className="px-2 text-xs text-slate-600">
-              Page {currentPage} of {totalPages}
+              Page {currentPage} sur {totalPages}
             </span>
             <button
               type="button"
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage >= totalPages}
               className="flex h-8 w-8 items-center justify-center rounded text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:hover:bg-transparent"
-              aria-label="Next page"
+              aria-label="Page suivante"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
