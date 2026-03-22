@@ -1,22 +1,47 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import type { SoilType } from "@/app/admin/(cms)/soil-types/actions";
+import { useEffect, useState } from "react";
+import {
+  getSoilType,
+  type SoilType,
+  type SoilTypeListItem,
+} from "@/app/admin/(cms)/soil-types/actions";
 import { SoilTypesList } from "./SoilTypesList";
 import { SoilTypeEditor } from "./SoilTypeEditor";
 
 type Props = {
-  soilTypes: SoilType[];
+  soilTypes: SoilTypeListItem[];
 };
 
 export function SoilTypesView({ soilTypes }: Props) {
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | "new" | null>(null);
+  const [selectedSoilType, setSelectedSoilType] = useState<SoilType | null>(null);
+  const [isLoadingSoilType, setIsLoadingSoilType] = useState(false);
 
-  const selectedSoilType = useMemo(() => {
-    if (selectedId === null || selectedId === "new") return null;
-    return soilTypes.find((s) => s.id === selectedId) ?? null;
-  }, [soilTypes, selectedId]);
+  useEffect(() => {
+    let active = true;
+    if (selectedId === null || selectedId === "new") {
+      setSelectedSoilType(null);
+      setIsLoadingSoilType(false);
+      return () => {
+        active = false;
+      };
+    }
+    setIsLoadingSoilType(true);
+    getSoilType(selectedId)
+      .then((soilType) => {
+        if (!active) return;
+        setSelectedSoilType(soilType);
+      })
+      .finally(() => {
+        if (!active) return;
+        setIsLoadingSoilType(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [selectedId]);
 
   return (
     <div className="flex min-h-0 flex-1 overflow-hidden">
@@ -31,12 +56,26 @@ export function SoilTypesView({ soilTypes }: Props) {
         />
       </div>
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-        {selectedId !== null ? (
+        {selectedId === "new" ? (
           <SoilTypeEditor
-            soilType={selectedId === "new" ? null : selectedSoilType}
+            soilType={null}
             onClose={() => setSelectedId(null)}
             onDeleted={() => setSelectedId(null)}
           />
+        ) : selectedId !== null && isLoadingSoilType ? (
+          <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
+            Loading soil type...
+          </div>
+        ) : selectedId !== null && selectedSoilType ? (
+          <SoilTypeEditor
+            soilType={selectedSoilType}
+            onClose={() => setSelectedId(null)}
+            onDeleted={() => setSelectedId(null)}
+          />
+        ) : selectedId !== null ? (
+          <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
+            Soil type not found.
+          </div>
         ) : (
           <div className="flex h-full items-center justify-center border-l border-slate-200 bg-slate-50/50 text-sm text-slate-500">
             Select a soil type or create a new one.

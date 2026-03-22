@@ -25,22 +25,49 @@ export type WineSubregion = {
   region_name_fr?: string | null;
 };
 
-export async function getWineSubregions(): Promise<WineSubregion[]> {
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from("wine_subregions")
-    .select(
-      `
-      *,
-      wine_regions!region_id(name_fr)
-    `
-    )
-    .is("deleted_at", null)
-    .order("name_fr", { ascending: true });
-  if (error) throw new Error(error.message);
-  const rows = (data ?? []) as (Omit<WineSubregion, "region_name_fr"> & {
-    wine_regions: { name_fr: string } | { name_fr: string }[] | null;
-  })[];
+export type WineSubregionListItem = Pick<
+  WineSubregion,
+  "id" | "region_id" | "slug" | "name_fr" | "name_en" | "status" | "updated_at" | "region_name_fr"
+>;
+
+const WINE_SUBREGION_LIST_COLUMNS = `
+  id,
+  region_id,
+  slug,
+  name_fr,
+  name_en,
+  status,
+  updated_at,
+  wine_regions!region_id(name_fr)
+`;
+
+const WINE_SUBREGION_DETAIL_COLUMNS = `
+  id,
+  region_id,
+  slug,
+  name_fr,
+  name_en,
+  area_hectares,
+  description_fr,
+  description_en,
+  geojson,
+  centroid_lat,
+  centroid_lng,
+  map_order,
+  status,
+  published_at,
+  created_at,
+  updated_at,
+  deleted_at
+`;
+
+function mapSubregionRows(
+  rows: Array<
+    Omit<WineSubregionListItem, "region_name_fr"> & {
+      wine_regions: { name_fr: string } | { name_fr: string }[] | null;
+    }
+  >
+): WineSubregionListItem[] {
   return rows.map((r) => {
     const { wine_regions, ...rest } = r;
     const region =
@@ -53,14 +80,71 @@ export async function getWineSubregions(): Promise<WineSubregion[]> {
       ...rest,
       region_name_fr: region?.name_fr ?? null,
     };
-  }) as WineSubregion[];
+  }) as WineSubregionListItem[];
+}
+
+export async function getWineSubregionsLite(): Promise<
+  Array<Pick<WineSubregion, "id" | "region_id" | "name_fr">>
+> {
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("wine_subregions")
+    .select(
+      `
+      id,
+      region_id,
+      name_fr,
+    `
+    )
+    .is("deleted_at", null)
+    .order("name_fr", { ascending: true });
+  if (error) throw new Error(error.message);
+  return ((data ?? []) as Array<{ id: string; region_id: string; name_fr: string }>).map((row) => ({
+    id: row.id,
+    region_id: row.region_id,
+    name_fr: row.name_fr,
+  }));
+}
+
+export async function getWineSubregionsPaginated(options?: {
+  limit?: number;
+  offset?: number;
+}): Promise<{ subregions: WineSubregionListItem[]; hasPrev: boolean; hasNext: boolean }> {
+  const supabase = getSupabaseAdmin();
+  const limit = Math.min(Math.max(options?.limit ?? 20, 1), 100);
+  const offset = Math.max(options?.offset ?? 0, 0);
+  const fetchLimit = limit + 1;
+  const from = offset;
+  const to = offset + fetchLimit - 1;
+
+  const { data, error } = await supabase
+    .from("wine_subregions")
+    .select(WINE_SUBREGION_LIST_COLUMNS)
+    .is("deleted_at", null)
+    .order("name_fr", { ascending: true })
+    .range(from, to);
+
+  if (error) throw new Error(error.message);
+
+  const rows = (data ?? []) as (Omit<WineSubregionListItem, "region_name_fr"> & {
+    wine_regions: { name_fr: string } | { name_fr: string }[] | null;
+  })[];
+  const hasNext = rows.length > limit;
+  const hasPrev = offset > 0;
+  const limitedRows = rows.slice(0, limit);
+
+  return {
+    subregions: mapSubregionRows(limitedRows),
+    hasPrev,
+    hasNext,
+  };
 }
 
 export async function getWineSubregion(id: string): Promise<WineSubregion | null> {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from("wine_subregions")
-    .select("*")
+    .select(WINE_SUBREGION_DETAIL_COLUMNS)
     .eq("id", id)
     .single();
   if (error || !data) return null;

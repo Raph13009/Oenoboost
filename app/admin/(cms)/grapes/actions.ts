@@ -34,20 +34,47 @@ export type Grape = {
   deleted_at: string | null;
 };
 
-export async function getGrapes(): Promise<Grape[]> {
+export type GrapeListItem = Pick<
+  Grape,
+  "id" | "slug" | "name_fr" | "name_en" | "type" | "origin_country" | "status" | "updated_at"
+>;
+
+const GRAPE_LIST_COLUMNS = "id,slug,name_fr,name_en,type,origin_country,status,updated_at";
+const GRAPE_DETAIL_COLUMNS =
+  "id,slug,name_fr,name_en,type,origin_country,origin_region_fr,origin_region_en,origin_latitude,origin_longitude,history_fr,history_en,crossings_fr,crossings_en,production_regions_fr,production_regions_en,viticultural_traits_fr,viticultural_traits_en,tasting_traits_fr,tasting_traits_en,emblematic_wines_fr,emblematic_wines_en,is_premium,status,published_at,created_at,updated_at,deleted_at";
+
+export async function getGrapesLite(): Promise<Array<Pick<Grape, "id" | "name_fr">>> {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from("grapes")
-    .select("*")
+    .select("id,name_fr")
     .is("deleted_at", null)
     .order("name_fr", { ascending: true });
   if (error) throw new Error(error.message);
-  return (data ?? []) as Grape[];
+  return ((data ?? []) as Array<{ id: string; name_fr: string }>).map((row) => ({
+    id: row.id,
+    name_fr: row.name_fr,
+  }));
+}
+
+export async function getGrapes(): Promise<GrapeListItem[]> {
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("grapes")
+    .select(GRAPE_LIST_COLUMNS)
+    .is("deleted_at", null)
+    .order("name_fr", { ascending: true });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as GrapeListItem[];
 }
 
 export async function getGrape(id: string): Promise<Grape | null> {
   const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase.from("grapes").select("*").eq("id", id).single();
+  const { data, error } = await supabase
+    .from("grapes")
+    .select(GRAPE_DETAIL_COLUMNS)
+    .eq("id", id)
+    .single();
   if (error || !data) return null;
   return data as Grape;
 }

@@ -11,7 +11,6 @@ import {
   Leaf,
   BookOpen,
   Newspaper,
-  HelpCircle,
   ClipboardList,
   Users,
   CreditCard,
@@ -42,12 +41,7 @@ const nav = [
     items: [
       { label: "Dictionary Terms", href: "/admin/dictionary", icon: BookOpen },
       { label: "News Articles", href: "/admin/news", icon: Newspaper },
-    ],
-  },
-  {
-    items: [
-      { label: "Quiz Questions", href: "/admin/quiz", icon: HelpCircle },
-      { label: "Quiz Sessions", href: "/admin/quiz-sessions", icon: ClipboardList },
+      { label: "Quiz Questions", href: "/admin/quiz", icon: ClipboardList },
     ],
   },
   {

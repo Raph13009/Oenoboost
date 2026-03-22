@@ -11,8 +11,6 @@ import {
   updateAppellation,
 } from "@/app/admin/(cms)/appellations/actions";
 import type { SoilType } from "@/app/admin/(cms)/soil-types/actions";
-import type { WineRegion } from "@/app/admin/(cms)/wine-regions/actions";
-import type { WineSubregion } from "@/app/admin/(cms)/wine-subregions/actions";
 import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
@@ -174,7 +172,7 @@ function RegionSelector({
   onChange,
   disabled,
 }: {
-  regions: WineRegion[];
+  regions: Array<{ id: string; name_fr: string }>;
   value: string;
   onChange: (regionId: string) => void;
   disabled?: boolean;
@@ -281,7 +279,7 @@ function SubregionSelector({
   onChange,
   disabled,
 }: {
-  subregions: WineSubregion[];
+  subregions: Array<{ id: string; name_fr: string }>;
   value: string;
   onChange: (subregionId: string) => void;
   disabled?: boolean;
@@ -383,9 +381,9 @@ function SubregionSelector({
 
 type Props = {
   appellation: Appellation | null;
-  regions: WineRegion[];
-  subregions: WineSubregion[];
-  soilTypes: SoilType[];
+  regions: Array<{ id: string; name_fr: string }>;
+  subregions: Array<{ id: string; name_fr: string; region_id: string }>;
+  soilTypes: Array<Pick<SoilType, "id" | "name_fr" | "slug">>;
   onClose: () => void;
   onDeleted: () => void;
 };

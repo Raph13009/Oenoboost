@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { SoilTypeListItem } from "@/app/admin/(cms)/soil-types/actions";
+import type { DictionaryTermListItem } from "@/app/admin/(cms)/dictionary/actions";
 import {
   DEFAULT_STATUS_FILTER,
   ListPanelHeader,
@@ -9,19 +9,13 @@ import {
 } from "@/components/admin/ListPanelHeader";
 
 type Props = {
-  soilTypes: SoilTypeListItem[];
+  terms: DictionaryTermListItem[];
   search: string;
   onSearchChange: (v: string) => void;
   selectedId: string | null;
   onSelect: (id: string) => void;
   onNew: () => void;
 };
-
-function formatDate(s: string | null) {
-  if (!s) return "—";
-  const d = new Date(s);
-  return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" });
-}
 
 function StatusDot({ status }: { status: string }) {
   const color =
@@ -39,8 +33,8 @@ function StatusDot({ status }: { status: string }) {
   );
 }
 
-export function SoilTypesList({
-  soilTypes,
+export function DictionaryList({
+  terms,
   search,
   onSearchChange,
   selectedId,
@@ -51,20 +45,20 @@ export function SoilTypesList({
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    let list = soilTypes;
+    let list = terms;
     if (q) {
       list = list.filter(
-        (s) =>
-          s.name_fr.toLowerCase().includes(q) ||
-          s.name_en?.toLowerCase().includes(q) ||
-          s.slug.toLowerCase().includes(q)
+        (t) =>
+          t.term_fr.toLowerCase().includes(q) ||
+          t.term_en?.toLowerCase().includes(q) ||
+          t.slug.toLowerCase().includes(q)
       );
     }
     if (statusFilter !== "all") {
-      list = list.filter((s) => s.status === statusFilter);
+      list = list.filter((t) => t.status === statusFilter);
     }
     return list;
-  }, [soilTypes, search, statusFilter]);
+  }, [terms, search, statusFilter]);
 
   const statusFilterConfig = {
     key: "status",
@@ -77,7 +71,7 @@ export function SoilTypesList({
   return (
     <div className="flex min-h-0 flex-1 flex-col border-r border-slate-200 bg-white">
       <ListPanelHeader
-        searchPlaceholder="Search soil types..."
+        searchPlaceholder="Search terms..."
         searchValue={search}
         onSearchChange={onSearchChange}
         filters={[statusFilterConfig]}
@@ -87,34 +81,46 @@ export function SoilTypesList({
         <table className="w-full text-sm">
           <thead className="sticky top-0 border-b border-slate-200 bg-slate-50 text-left text-xs text-slate-500">
             <tr>
-              <th className="p-2 font-medium">name_fr</th>
-              <th className="p-2 font-medium">status</th>
-              <th className="p-2 font-medium">updated_at</th>
+              <th className="p-2 font-medium">term_fr</th>
+              <th className="w-20 p-2 font-medium text-right">status</th>
             </tr>
           </thead>
           <tbody>
-            {filtered.map((s) => (
+            {filtered.map((t) => (
               <tr
-                key={s.id}
-                onClick={() => onSelect(s.id)}
+                key={t.id}
+                onClick={() => onSelect(t.id)}
                 className={`cursor-pointer border-b border-slate-100 hover:bg-slate-50 ${
-                  selectedId === s.id ? "bg-slate-100" : ""
+                  selectedId === t.id ? "bg-slate-100" : ""
                 }`}
               >
-                <td className="p-2 font-medium text-slate-900">{s.name_fr}</td>
-                <td className="p-2 text-slate-600">
-                  <span className="inline-flex items-center gap-2">
-                    <StatusDot status={s.status} />
-                    <span className="text-slate-700">{s.status}</span>
+                <td className="p-2">
+                  <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+                    <span className="font-medium text-slate-900 truncate">{t.term_fr}</span>
+                    {t.is_premium && (
+                      <span className="shrink-0 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-800">
+                        Premium
+                      </span>
+                    )}
+                    {t.is_word_of_day && (
+                      <span className="shrink-0 rounded bg-sky-100 px-1.5 py-0.5 text-[10px] font-medium text-sky-800">
+                        Word of day
+                      </span>
+                    )}
+                  </div>
+                </td>
+                <td className="p-2 text-right">
+                  <span className="inline-flex items-center justify-end gap-1.5">
+                    <StatusDot status={t.status} />
+                    <span className="text-slate-600">{t.status}</span>
                   </span>
                 </td>
-                <td className="p-2 text-slate-500">{formatDate(s.updated_at)}</td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={3} className="p-4 text-center text-sm text-slate-500">
-                  {soilTypes.length === 0 ? "No soil types yet." : "No match for search or filters."}
+                <td colSpan={2} className="p-4 text-center text-sm text-slate-500">
+                  {terms.length === 0 ? "No terms yet." : "No match for search or filters."}
                 </td>
               </tr>
             )}
@@ -124,4 +130,3 @@ export function SoilTypesList({
     </div>
   );
 }
-

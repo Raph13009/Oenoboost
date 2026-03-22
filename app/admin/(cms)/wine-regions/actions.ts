@@ -25,22 +25,65 @@ export type WineRegion = {
   deleted_at: string | null;
 };
 
-export async function getWineRegions(): Promise<WineRegion[]> {
+export type WineRegionListItem = Pick<
+  WineRegion,
+  "id" | "slug" | "name_fr" | "name_en" | "status" | "updated_at"
+>;
+
+const WINE_REGION_LIST_COLUMNS = "id,slug,name_fr,name_en,status,updated_at";
+const WINE_REGION_DETAIL_COLUMNS =
+  "id,slug,name_fr,name_en,department_count,area_hectares,total_production_hl,main_grapes_fr,main_grapes_en,geojson,centroid_lat,centroid_lng,color_hex,map_order,status,published_at,created_at,updated_at,deleted_at";
+
+export async function getWineRegionsLite(): Promise<Array<Pick<WineRegion, "id" | "name_fr">>> {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from("wine_regions")
-    .select("*")
+    .select("id,name_fr")
     .is("deleted_at", null)
     .order("name_fr", { ascending: true });
   if (error) throw new Error(error.message);
-  return (data ?? []) as WineRegion[];
+  return ((data ?? []) as Array<{ id: string; name_fr: string }>).map((row) => ({
+    id: row.id,
+    name_fr: row.name_fr,
+  }));
+}
+
+export async function getWineRegionsPaginated(options?: {
+  limit?: number;
+  offset?: number;
+}): Promise<{ regions: WineRegionListItem[]; hasPrev: boolean; hasNext: boolean }> {
+  const supabase = getSupabaseAdmin();
+  const limit = Math.min(Math.max(options?.limit ?? 20, 1), 100);
+  const offset = Math.max(options?.offset ?? 0, 0);
+  const fetchLimit = limit + 1;
+  const from = offset;
+  const to = offset + fetchLimit - 1;
+
+  const { data, error } = await supabase
+    .from("wine_regions")
+    .select(WINE_REGION_LIST_COLUMNS)
+    .is("deleted_at", null)
+    .order("name_fr", { ascending: true })
+    .range(from, to);
+
+  if (error) throw new Error(error.message);
+
+  const rows = (data ?? []) as WineRegionListItem[];
+  const hasNext = rows.length > limit;
+  const hasPrev = offset > 0;
+
+  return {
+    regions: rows.slice(0, limit),
+    hasPrev,
+    hasNext,
+  };
 }
 
 export async function getWineRegion(id: string): Promise<WineRegion | null> {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from("wine_regions")
-    .select("*")
+    .select(WINE_REGION_DETAIL_COLUMNS)
     .eq("id", id)
     .single();
   if (error || !data) return null;

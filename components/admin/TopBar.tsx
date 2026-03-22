@@ -13,7 +13,6 @@ const pathToTitle: Record<string, string> = {
   "/admin/dictionary": "Dictionary Terms",
   "/admin/news": "News Articles",
   "/admin/quiz": "Quiz Questions",
-  "/admin/quiz-sessions": "Quiz Sessions",
   "/admin/users": "Users",
   "/admin/subscriptions": "Subscriptions",
   "/admin/settings": "Settings",

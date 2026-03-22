@@ -1,28 +1,46 @@
 import { WorkspacePage } from "@/components/admin/WorkspacePage";
-import { getWineRegions } from "@/app/admin/(cms)/wine-regions/actions";
-import { getWineSubregions } from "@/app/admin/(cms)/wine-subregions/actions";
+import { getWineRegionsLite } from "@/app/admin/(cms)/wine-regions/actions";
+import { getWineSubregionsLite } from "@/app/admin/(cms)/wine-subregions/actions";
 import { getAppellations } from "./actions";
 import { AppellationsView } from "@/components/admin/appellations/AppellationsView";
-import { getSoilTypes } from "@/app/admin/(cms)/soil-types/actions";
+import { getSoilTypesLite } from "@/app/admin/(cms)/soil-types/actions";
 
-export default async function AppellationsPage() {
-  let appellations: Awaited<ReturnType<typeof getAppellations>> = [];
-  let regions: Awaited<ReturnType<typeof getWineRegions>> = [];
-  let subregions: Awaited<ReturnType<typeof getWineSubregions>> = [];
-  let soilTypes: Awaited<ReturnType<typeof getSoilTypes>> = [];
+export default async function AppellationsPage({
+  searchParams,
+}: {
+  searchParams?: { page?: string; q?: string };
+}) {
+  const pageSize = 14;
+  const pageNumRaw = searchParams?.page ?? "1";
+  const searchQuery = (searchParams?.q ?? "").trim();
+  const pageNum = Number.parseInt(pageNumRaw, 10);
+  const currentPage = Number.isFinite(pageNum) && pageNum >= 1 ? pageNum : 1;
+  const offset = (currentPage - 1) * pageSize;
+
+  let appellations: Awaited<ReturnType<typeof getAppellations>>["appellations"] = [];
+  let hasPrev = false;
+  let hasNext = false;
+  let regions: Awaited<ReturnType<typeof getWineRegionsLite>> = [];
+  let subregions: Awaited<ReturnType<typeof getWineSubregionsLite>> = [];
+  let soilTypes: Awaited<ReturnType<typeof getSoilTypesLite>> = [];
   try {
-    [appellations, regions, subregions, soilTypes] = await Promise.all([
-      getAppellations(),
-      getWineRegions(),
-      getWineSubregions(),
-      getSoilTypes(),
-    ]);
+    const res = await getAppellations({ limit: pageSize, offset, query: searchQuery });
+    ({ appellations, hasPrev, hasNext } = res);
   } catch {
     appellations = [];
-    regions = [];
-    subregions = [];
-    soilTypes = [];
+    hasPrev = false;
+    hasNext = false;
   }
+
+  const [regionsRes, subregionsRes, soilTypesRes] = await Promise.allSettled([
+    getWineRegionsLite(),
+    getWineSubregionsLite(),
+    getSoilTypesLite(),
+  ]);
+
+  regions = regionsRes.status === "fulfilled" ? regionsRes.value : [];
+  subregions = subregionsRes.status === "fulfilled" ? subregionsRes.value : [];
+  soilTypes = soilTypesRes.status === "fulfilled" ? soilTypesRes.value : [];
 
   return (
     <WorkspacePage
@@ -36,6 +54,10 @@ export default async function AppellationsPage() {
           regions={regions}
           subregions={subregions}
           soilTypes={soilTypes}
+          currentPage={currentPage}
+          hasPrev={hasPrev}
+          hasNext={hasNext}
+          initialSearch={searchQuery}
         />
       </div>
     </WorkspacePage>

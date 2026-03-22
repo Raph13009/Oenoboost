@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 
 export type Appellation = {
   id: string;
-  subregion_id: string;
+  subregion_id?: string | null;
   slug: string;
   name_fr: string;
   name_en: string | null;
@@ -37,68 +37,140 @@ export type Appellation = {
   region_id?: string | null;
 };
 
-export async function getAppellations(): Promise<Appellation[]> {
+export type AppellationListItem = Pick<
+  Appellation,
+  "id" | "slug" | "name_fr" | "name_en" | "status" | "updated_at" | "subregion_id" | "subregion_name_fr" | "region_name_fr" | "region_id"
+>;
+
+const APPELLATION_LIST_COLUMNS = "id,slug,name_fr,name_en,status,updated_at";
+const APPELLATION_DETAIL_COLUMNS =
+  "id,slug,name_fr,name_en,area_hectares,producer_count,production_volume_hl,price_range_min_eur,price_range_max_eur,history_fr,history_en,colors_grapes_fr,colors_grapes_en,soils_description_fr,soils_description_en,geojson,centroid_lat,centroid_lng,is_premium,status,published_at,created_at,updated_at,deleted_at";
+
+export async function getAppellations(options?: {
+  limit?: number;
+  offset?: number;
+  query?: string;
+}): Promise<{ appellations: AppellationListItem[]; hasPrev: boolean; hasNext: boolean }> {
   const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
+  const limit = Math.min(Math.max(options?.limit ?? 20, 1), 100);
+  const offset = Math.max(options?.offset ?? 0, 0);
+  const query = (options?.query ?? "").trim();
+  const fetchLimit = limit + 1;
+  const from = offset;
+  const to = offset + fetchLimit - 1;
+
+  let queryBuilder = supabase
     .from("appellations")
+    .select(APPELLATION_LIST_COLUMNS)
+    .is("deleted_at", null);
+
+  if (query) {
+    const escaped = query.replaceAll(",", " ");
+    queryBuilder = queryBuilder.or(
+      `name_fr.ilike.%${escaped}%,name_en.ilike.%${escaped}%,slug.ilike.%${escaped}%`
+    );
+  }
+
+  const { data, error } = await queryBuilder
+    .order("name_fr", { ascending: true })
+    .range(from, to);
+  if (error) throw new Error(error.message);
+
+  const rows = ((data ?? []) as Array<Pick<Appellation, "id" | "slug" | "name_fr" | "name_en" | "status" | "updated_at">>).slice(0, limit);
+  const hasNext = (data ?? []).length > limit;
+  const hasPrev = offset > 0;
+  const appellationIds = rows.map((row) => row.id);
+
+  if (appellationIds.length === 0) {
+    return {
+      appellations: [],
+      hasPrev,
+      hasNext,
+    };
+  }
+
+  const { data: linkData, error: linkError } = await supabase
+    .from("appellation_subregion_links")
     .select(
       `
-      *,
+      appellation_id,
+      subregion_id,
       wine_subregions!subregion_id(
+        id,
         name_fr,
         region_id,
         wine_regions!region_id(name_fr)
       )
     `
     )
-    .is("deleted_at", null)
-    .order("name_fr", { ascending: true });
-  if (error) throw new Error(error.message);
+    .in("appellation_id", appellationIds);
+  if (linkError) {
+    return {
+      appellations: rows.map((row) => ({
+        ...row,
+        subregion_id: null,
+        subregion_name_fr: null,
+        region_name_fr: null,
+        region_id: null,
+      })) as AppellationListItem[],
+      hasPrev,
+      hasNext,
+    };
+  }
 
-  const rows = (data ?? []) as (Omit<
-    Appellation,
-    "subregion_name_fr" | "region_name_fr" | "region_id"
-  > & {
+  const firstSubregionByAppellation = new Map<
+    string,
+    { id: string; name_fr: string | null; region_id: string | null; region_name_fr: string | null }
+  >();
+
+  for (const link of (linkData ?? []) as Array<{
+    appellation_id: string;
+    subregion_id: string;
     wine_subregions:
       | {
-          name_fr: string;
+          id: string;
+          name_fr: string | null;
           region_id: string | null;
-          wine_regions: { name_fr: string } | { name_fr: string }[] | null;
+          wine_regions: { name_fr: string | null } | { name_fr: string | null }[] | null;
         }
-      | {
-          name_fr: string;
-          region_id: string | null;
-          wine_regions: { name_fr: string } | { name_fr: string }[] | null;
-        }[]
       | null;
-  })[];
-
-  return rows.map((r) => {
-    const { wine_subregions, ...rest } = r;
-    const sr =
-      wine_subregions == null
-        ? null
-        : Array.isArray(wine_subregions)
-          ? wine_subregions[0]
-          : wine_subregions;
-    const region =
-      sr?.wine_regions == null
-        ? null
-        : Array.isArray(sr.wine_regions)
-          ? sr.wine_regions[0]
-          : sr.wine_regions;
-    return {
-      ...(rest as Appellation),
-      subregion_name_fr: sr?.name_fr ?? null,
+  }>) {
+    if (firstSubregionByAppellation.has(link.appellation_id)) continue;
+    const subregion = link.wine_subregions;
+    const region = Array.isArray(subregion?.wine_regions)
+      ? subregion?.wine_regions[0]
+      : subregion?.wine_regions;
+    firstSubregionByAppellation.set(link.appellation_id, {
+      id: subregion?.id ?? link.subregion_id,
+      name_fr: subregion?.name_fr ?? null,
+      region_id: subregion?.region_id ?? null,
       region_name_fr: region?.name_fr ?? null,
-      region_id: sr?.region_id ?? null,
-    };
-  }) as Appellation[];
+    });
+  }
+
+  return {
+    appellations: rows.map((row) => {
+      const sr = firstSubregionByAppellation.get(row.id);
+      return {
+        ...row,
+        subregion_id: sr?.id ?? null,
+        subregion_name_fr: sr?.name_fr ?? null,
+        region_name_fr: sr?.region_name_fr ?? null,
+        region_id: sr?.region_id ?? null,
+      };
+    }) as AppellationListItem[],
+    hasPrev,
+    hasNext,
+  };
 }
 
 export async function getAppellation(id: string): Promise<Appellation | null> {
   const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase.from("appellations").select("*").eq("id", id).single();
+  const { data, error } = await supabase
+    .from("appellations")
+    .select(APPELLATION_DETAIL_COLUMNS)
+    .eq("id", id)
+    .single();
   if (error || !data) return null;
   return data as Appellation;
 }
@@ -126,7 +198,6 @@ function formToRow(form: AppellationForm): Record<string, unknown> {
     }
   }
   return {
-    subregion_id: form.subregion_id || null,
     slug: form.slug || null,
     name_fr: form.name_fr || "",
     name_en: form.name_en || null,
@@ -150,6 +221,28 @@ function formToRow(form: AppellationForm): Record<string, unknown> {
   };
 }
 
+async function syncAppellationSubregionLink(
+  appellationId: string,
+  subregionId?: string | null
+): Promise<{ error?: string }> {
+  const supabase = getSupabaseAdmin();
+
+  const { error: deleteError } = await supabase
+    .from("appellation_subregion_links")
+    .delete()
+    .eq("appellation_id", appellationId);
+  if (deleteError) return { error: deleteError.message };
+
+  if (!subregionId) return {};
+
+  const { error: insertError } = await supabase
+    .from("appellation_subregion_links")
+    .insert([{ appellation_id: appellationId, subregion_id: subregionId }]);
+  if (insertError) return { error: insertError.message };
+
+  return {};
+}
+
 export async function createAppellation(
   form: AppellationForm
 ): Promise<{ error?: string; id?: string }> {
@@ -157,8 +250,12 @@ export async function createAppellation(
   const row = formToRow(form);
   const { data, error } = await supabase.from("appellations").insert(row).select("id").single();
   if (error) return { error: error.message };
+  const createdId = (data as { id: string } | null)?.id;
+  if (!createdId) return { error: "Unable to read created appellation id." };
+  const linkRes = await syncAppellationSubregionLink(createdId, form.subregion_id ?? null);
+  if (linkRes.error) return { error: linkRes.error };
   revalidatePath("/admin/appellations");
-  return { id: (data as { id: string } | null)?.id };
+  return { id: createdId };
 }
 
 export async function updateAppellation(
@@ -169,6 +266,8 @@ export async function updateAppellation(
   const row = formToRow(form);
   const { error } = await supabase.from("appellations").update(row).eq("id", id);
   if (error) return { error: error.message };
+  const linkRes = await syncAppellationSubregionLink(id, form.subregion_id ?? null);
+  if (linkRes.error) return { error: linkRes.error };
   revalidatePath("/admin/appellations");
   return {};
 }
@@ -214,4 +313,3 @@ export async function setAppellationSoilLinks(
   revalidatePath("/admin/appellations");
   return {};
 }
-

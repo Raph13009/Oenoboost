@@ -1,13 +1,28 @@
 import { WorkspacePage } from "@/components/admin/WorkspacePage";
-import { getWineRegions } from "./actions";
+import { getWineRegionsPaginated } from "./actions";
 import { WineRegionsView } from "@/components/admin/wine-regions/WineRegionsView";
 
-export default async function WineRegionsPage() {
-  let regions: Awaited<ReturnType<typeof getWineRegions>> = [];
+export default async function WineRegionsPage({
+  searchParams,
+}: {
+  searchParams?: { page?: string };
+}) {
+  const pageSize = 20;
+  const pageNumRaw = searchParams?.page ?? "1";
+  const pageNum = Number.parseInt(pageNumRaw, 10);
+  const currentPage = Number.isFinite(pageNum) && pageNum >= 1 ? pageNum : 1;
+  const offset = (currentPage - 1) * pageSize;
+
+  let regions: Awaited<ReturnType<typeof getWineRegionsPaginated>>["regions"] = [];
+  let hasPrev = false;
+  let hasNext = false;
   try {
-    regions = await getWineRegions();
+    const res = await getWineRegionsPaginated({ limit: pageSize, offset });
+    ({ regions, hasPrev, hasNext } = res);
   } catch {
     regions = [];
+    hasPrev = false;
+    hasNext = false;
   }
 
   return (
@@ -17,7 +32,12 @@ export default async function WineRegionsPage() {
       flushLeft
     >
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        <WineRegionsView regions={regions} />
+        <WineRegionsView
+          regions={regions}
+          currentPage={currentPage}
+          hasPrev={hasPrev}
+          hasNext={hasNext}
+        />
       </div>
     </WorkspacePage>
   );

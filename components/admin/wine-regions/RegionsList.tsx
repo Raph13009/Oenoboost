@@ -1,20 +1,25 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import type { WineRegion } from "@/app/admin/(cms)/wine-regions/actions";
+import type { WineRegionListItem } from "@/app/admin/(cms)/wine-regions/actions";
 import {
   ListPanelHeader,
   STATUS_FILTER_OPTIONS,
   DEFAULT_STATUS_FILTER,
 } from "@/components/admin/ListPanelHeader";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Props = {
-  regions: WineRegion[];
+  regions: WineRegionListItem[];
   search: string;
   onSearchChange: (v: string) => void;
   selectedId: string | null;
   onSelect: (id: string) => void;
   onNew: () => void;
+  currentPage: number;
+  hasPrev: boolean;
+  hasNext: boolean;
+  onPageChange: (page: number) => void;
 };
 
 function formatDate(s: string | null) {
@@ -39,7 +44,18 @@ function StatusDot({ status }: { status: string }) {
   );
 }
 
-export function RegionsList({ regions, search, onSearchChange, selectedId, onSelect, onNew }: Props) {
+export function RegionsList({
+  regions,
+  search,
+  onSearchChange,
+  selectedId,
+  onSelect,
+  onNew,
+  currentPage,
+  hasPrev,
+  hasNext,
+  onPageChange,
+}: Props) {
   const [statusFilter, setStatusFilter] = useState(DEFAULT_STATUS_FILTER);
 
   const filtered = useMemo(() => {
@@ -76,7 +92,32 @@ export function RegionsList({ regions, search, onSearchChange, selectedId, onSel
         filters={[statusFilterConfig]}
         onNew={onNew}
       />
-      <div className="flex-1 overflow-auto">
+      <div className="flex items-center justify-between border-b border-slate-200 bg-white px-3 py-2">
+        <div className="text-xs font-medium text-slate-600">
+          Page <span className="font-mono">{currentPage}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={!hasPrev}
+            className="inline-flex items-center gap-1 rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white"
+          >
+            <ChevronLeft className="h-3.5 w-3.5" />
+            Prev
+          </button>
+          <button
+            type="button"
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={!hasNext}
+            className="inline-flex items-center gap-1 rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white"
+          >
+            Next
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </div>
+      <div className="flex-1 overflow-hidden">
         <table className="w-full text-sm">
           <thead className="sticky top-0 border-b border-slate-200 bg-slate-50 text-left text-xs text-slate-500">
             <tr>

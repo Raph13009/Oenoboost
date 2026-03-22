@@ -3,7 +3,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import type { WineSubregion } from "@/app/admin/(cms)/wine-subregions/actions";
-import type { WineRegion } from "@/app/admin/(cms)/wine-regions/actions";
 import {
   createWineSubregion,
   updateWineSubregion,
@@ -138,7 +137,7 @@ function RegionSelector({
   onChange,
   disabled,
 }: {
-  regions: WineRegion[];
+  regions: Array<{ id: string; name_fr: string }>;
   value: string;
   onChange: (regionId: string) => void;
   disabled?: boolean;
@@ -269,7 +268,7 @@ function formatDate(s: string | null) {
 
 type Props = {
   subregion: WineSubregion | null;
-  regions: WineRegion[];
+  regions: Array<{ id: string; name_fr: string }>;
   onClose: () => void;
   onDeleted: () => void;
 };

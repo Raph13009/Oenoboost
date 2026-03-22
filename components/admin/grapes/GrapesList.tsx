@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Grape } from "@/app/admin/(cms)/grapes/actions";
+import type { GrapeListItem } from "@/app/admin/(cms)/grapes/actions";
 import {
   ListPanelHeader,
   STATUS_FILTER_OPTIONS,
@@ -9,7 +9,7 @@ import {
 } from "@/components/admin/ListPanelHeader";
 
 type Props = {
-  grapes: Grape[];
+  grapes: GrapeListItem[];
   search: string;
   onSearchChange: (v: string) => void;
   selectedId: string | null;

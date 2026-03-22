@@ -1,23 +1,30 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import type { WineSubregion } from "@/app/admin/(cms)/wine-subregions/actions";
+import type { WineSubregionListItem } from "@/app/admin/(cms)/wine-subregions/actions";
 import {
   ListPanelHeader,
   STATUS_FILTER_OPTIONS,
   DEFAULT_STATUS_FILTER,
 } from "@/components/admin/ListPanelHeader";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { TableSkeleton } from "@/components/admin/Loaders";
 
 type RegionOption = { id: string; name_fr: string };
 
 type Props = {
-  subregions: WineSubregion[];
+  subregions: WineSubregionListItem[];
   regions: RegionOption[];
   search: string;
   onSearchChange: (v: string) => void;
   selectedId: string | null;
   onSelect: (id: string) => void;
   onNew: () => void;
+  currentPage: number;
+  hasPrev: boolean;
+  hasNext: boolean;
+  onPageChange: (page: number) => void;
+  isLoadingList?: boolean;
 };
 
 function formatDate(s: string | null) {
@@ -50,6 +57,11 @@ export function SubregionsList({
   selectedId,
   onSelect,
   onNew,
+  currentPage,
+  hasPrev,
+  hasNext,
+  onPageChange,
+  isLoadingList = false,
 }: Props) {
   const [statusFilter, setStatusFilter] = useState(DEFAULT_STATUS_FILTER);
   const [regionFilter, setRegionFilter] = useState("all");
@@ -104,7 +116,35 @@ export function SubregionsList({
         filters={[statusFilterConfig, regionFilterConfig]}
         onNew={onNew}
       />
-      <div className="flex-1 overflow-auto">
+      <div className="flex flex-col items-start gap-2 border-b border-slate-200 bg-white px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-xs font-medium text-slate-600">
+          Page <span className="font-mono">{currentPage}</span>
+        </div>
+        <div className="flex w-full items-center justify-start gap-2 sm:w-auto">
+          <button
+            type="button"
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={!hasPrev}
+            className="inline-flex items-center gap-1 rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white"
+          >
+            <ChevronLeft className="h-3.5 w-3.5" />
+            Prev
+          </button>
+          <button
+            type="button"
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={!hasNext}
+            className="inline-flex items-center gap-1 rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white"
+          >
+            Next
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </div>
+      <div className={`flex-1 overflow-hidden transition-opacity duration-200 ${isLoadingList ? "opacity-70" : "opacity-100"}`}>
+        {isLoadingList ? (
+          <TableSkeleton rows={8} columns={4} />
+        ) : (
         <table className="w-full text-sm">
           <thead className="sticky top-0 border-b border-slate-200 bg-slate-50 text-left text-xs text-slate-500">
             <tr>
@@ -142,6 +182,7 @@ export function SubregionsList({
             )}
           </tbody>
         </table>
+        )}
       </div>
     </div>
   );
