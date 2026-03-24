@@ -2,6 +2,7 @@
 
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
+import { randomUUID } from "crypto";
 
 export type SoilType = {
   id: string;
@@ -283,4 +284,59 @@ export async function removeSoilTypeAppellationLink(
   if (error) return { error: error.message };
   revalidatePath("/admin/soil-types");
   return {};
+}
+
+const SOIL_PHOTOS_BUCKET = "soil-photos";
+
+function sanitizeFileSegment(value: string | null | undefined) {
+  return (value ?? "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
+export async function uploadSoilTypePhoto(
+  formData: FormData
+): Promise<{ url?: string; path?: string; error?: string }> {
+  const file = formData.get("file");
+  if (!(file instanceof File)) {
+    return { error: "Aucun fichier recadre fourni." };
+  }
+
+  if (!file.type.startsWith("image/")) {
+    return { error: "Le fichier doit etre une image." };
+  }
+
+  const maxBytes = 10 * 1024 * 1024;
+  if (file.size > maxBytes) {
+    return { error: "Image trop lourde. Maximum 10 Mo." };
+  }
+
+  const supabase = getSupabaseAdmin();
+  const arrayBuffer = await file.arrayBuffer();
+  const soilTypeId = formData.get("soilTypeId");
+  const slugInput = formData.get("slug");
+  const folder = typeof soilTypeId === "string" && soilTypeId ? soilTypeId : "drafts";
+  const slug = sanitizeFileSegment(typeof slugInput === "string" ? slugInput : null) || "soil";
+  const filePath = `${folder}/${slug}-${randomUUID()}.jpg`;
+
+  const { error: uploadError } = await supabase.storage
+    .from(SOIL_PHOTOS_BUCKET)
+    .upload(filePath, arrayBuffer, {
+      contentType: "image/jpeg",
+      cacheControl: "31536000",
+      upsert: false,
+    });
+
+  if (uploadError) {
+    return { error: uploadError.message };
+  }
+
+  const { data } = supabase.storage.from(SOIL_PHOTOS_BUCKET).getPublicUrl(filePath);
+
+  revalidatePath("/admin/soil-types");
+  return { url: data.publicUrl, path: filePath };
 }
