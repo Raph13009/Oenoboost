@@ -13,6 +13,7 @@ import {
   BookOpen,
   Newspaper,
   ClipboardList,
+  ListOrdered,
   Users,
   CreditCard,
   Settings,
@@ -44,6 +45,7 @@ const nav = [
       { label: "Glossaire", href: "/admin/dictionary", icon: BookOpen },
       { label: "Actualités", href: "/admin/news", icon: Newspaper },
       { label: "Questions du quiz", href: "/admin/quiz", icon: ClipboardList },
+      { label: "Groupes de quizz", href: "/admin/quizzes", icon: ListOrdered },
     ],
   },
   {
