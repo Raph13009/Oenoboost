@@ -2,6 +2,11 @@
 
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
+import {
+  buildAppellationSubregionLinkSyncPlan,
+  normalizeSubregionIds,
+  validatePublishedAppellationLinkState,
+} from "./link-sync";
 
 export type Appellation = {
   id: string;
@@ -282,7 +287,59 @@ export async function getAppellation(id: string): Promise<Appellation | null> {
     .eq("id", id)
     .single();
   if (error || !data) return null;
-  return data as Appellation;
+
+  const { data: linkData, error: linkError } = await supabase
+    .from("appellation_subregion_links")
+    .select(
+      `
+      subregion_id,
+      wine_subregions!subregion_id(
+        id,
+        name_fr,
+        region_id,
+        wine_regions!region_id(name_fr)
+      )
+    `
+    )
+    .eq("appellation_id", id)
+    .limit(1);
+
+  if (linkError) {
+    console.warn("[appellations.getAppellation] unable to load subregion link", {
+      appellationId: id,
+      error: linkError.message,
+    });
+  }
+
+  const firstLink = getFirstRelation(
+    (linkData ?? []) as Array<{
+      subregion_id: string;
+      wine_subregions:
+        | {
+            id: string;
+            name_fr: string | null;
+            region_id: string | null;
+            wine_regions: AppellationRegionRelation;
+          }
+        | {
+            id: string;
+            name_fr: string | null;
+            region_id: string | null;
+            wine_regions: AppellationRegionRelation;
+          }[]
+        | null;
+    }>
+  );
+  const subregion = getFirstRelation(firstLink?.wine_subregions);
+  const region = getFirstRelation(subregion?.wine_regions);
+
+  return {
+    ...(data as Appellation),
+    subregion_id: firstLink?.subregion_id ?? null,
+    subregion_name_fr: subregion?.name_fr ?? null,
+    region_id: subregion?.region_id ?? null,
+    region_name_fr: region?.name_fr ?? null,
+  };
 }
 
 type AppellationForm = Omit<
@@ -341,29 +398,85 @@ function formToRow(form: AppellationForm): Record<string, unknown> {
 async function syncAppellationSubregionLink(
   appellationId: string,
   subregionId?: string | null
-): Promise<{ error?: string }> {
+): Promise<{ error?: string; finalSubregionIds?: string[] }> {
   const supabase = getSupabaseAdmin();
-
-  const { error: deleteError } = await supabase
+  const { data: existingLinks, error: existingLinksError } = await supabase
     .from("appellation_subregion_links")
-    .delete()
+    .select("subregion_id")
     .eq("appellation_id", appellationId);
-  if (deleteError) return { error: deleteError.message };
 
-  if (!subregionId) return {};
+  if (existingLinksError) {
+    console.error("[appellations.syncSubregionLink] failed to read current links", {
+      appellationId,
+      error: existingLinksError.message,
+    });
+    return { error: existingLinksError.message };
+  }
 
-  const { error: insertError } = await supabase
-    .from("appellation_subregion_links")
-    .insert([{ appellation_id: appellationId, subregion_id: subregionId }]);
-  if (insertError) return { error: insertError.message };
+  const existingSubregionIds = (existingLinks ?? [])
+    .map((row) => (row as { subregion_id: string | null }).subregion_id)
+    .filter((value): value is string => value != null);
+  const requestedSubregionIds = normalizeSubregionIds(subregionId);
+  const plan = buildAppellationSubregionLinkSyncPlan(existingSubregionIds, requestedSubregionIds);
 
-  return {};
+  console.info("[appellations.syncSubregionLink] syncing links", {
+    appellationId,
+    existingSubregionIds,
+    requestedSubregionIds,
+    preserveExisting: plan.preserveExisting,
+    toInsert: plan.toInsert,
+    toDelete: plan.toDelete,
+  });
+
+  if (plan.toInsert.length > 0) {
+    const { error: upsertError } = await supabase
+      .from("appellation_subregion_links")
+      .upsert(
+        plan.toInsert.map((subregion_id) => ({ appellation_id: appellationId, subregion_id })),
+        { onConflict: "appellation_id,subregion_id", ignoreDuplicates: true }
+      );
+
+    if (upsertError) {
+      console.error("[appellations.syncSubregionLink] failed to upsert links", {
+        appellationId,
+        toInsert: plan.toInsert,
+        error: upsertError.message,
+      });
+      return { error: upsertError.message };
+    }
+  }
+
+  if (plan.toDelete.length > 0) {
+    const { error: deleteError } = await supabase
+      .from("appellation_subregion_links")
+      .delete()
+      .eq("appellation_id", appellationId)
+      .in("subregion_id", plan.toDelete);
+
+    if (deleteError) {
+      console.error("[appellations.syncSubregionLink] failed to delete stale links", {
+        appellationId,
+        toDelete: plan.toDelete,
+        error: deleteError.message,
+      });
+      return { error: deleteError.message };
+    }
+  }
+
+  return { finalSubregionIds: plan.finalSubregionIds };
 }
 
 export async function createAppellation(
   form: AppellationForm
 ): Promise<{ error?: string; id?: string }> {
   const supabase = getSupabaseAdmin();
+  const requestedSubregionIds = normalizeSubregionIds(form.subregion_id);
+  const linkValidationError = validatePublishedAppellationLinkState(
+    form.status || "draft",
+    requestedSubregionIds ?? []
+  );
+  if (linkValidationError) return { error: linkValidationError };
+
   const row = formToRow(form);
   const { data, error } = await supabase.from("appellations").insert(row).select("id").single();
   if (error) return { error: error.message };
@@ -380,10 +493,44 @@ export async function updateAppellation(
   form: AppellationForm
 ): Promise<{ error?: string }> {
   const supabase = getSupabaseAdmin();
+  const { data: currentAppellation, error: readError } = await supabase
+    .from("appellations")
+    .select("status")
+    .eq("id", id)
+    .single();
+  if (readError || !currentAppellation) {
+    return { error: readError?.message ?? "Impossible de lire l'AOP actuelle." };
+  }
+
+  const { data: existingLinks, error: existingLinksError } = await supabase
+    .from("appellation_subregion_links")
+    .select("subregion_id")
+    .eq("appellation_id", id);
+  if (existingLinksError) {
+    return { error: existingLinksError.message };
+  }
+
+  const existingSubregionIds = (existingLinks ?? [])
+    .map((row) => (row as { subregion_id: string | null }).subregion_id)
+    .filter((value): value is string => value != null);
+  const requestedSubregionIds = normalizeSubregionIds(form.subregion_id);
+  const plan = buildAppellationSubregionLinkSyncPlan(existingSubregionIds, requestedSubregionIds);
+  const targetStatus = form.status || (currentAppellation as { status: string }).status || "draft";
+  const linkValidationError = validatePublishedAppellationLinkState(targetStatus, plan.finalSubregionIds);
+  if (linkValidationError) {
+    console.warn("[appellations.updateAppellation] blocked save without subregion link", {
+      appellationId: id,
+      status: targetStatus,
+      existingSubregionIds,
+      requestedSubregionIds,
+    });
+    return { error: linkValidationError };
+  }
+
   const row = formToRow(form);
   const { error } = await supabase.from("appellations").update(row).eq("id", id);
   if (error) return { error: error.message };
-  const linkRes = await syncAppellationSubregionLink(id, form.subregion_id ?? null);
+  const linkRes = await syncAppellationSubregionLink(id, form.subregion_id);
   if (linkRes.error) return { error: linkRes.error };
   revalidatePath("/admin/appellations");
   return {};
