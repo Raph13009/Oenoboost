@@ -477,6 +477,19 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
         >
           <div className={fieldSpacing}>
             <div>
+              <label className={labelClass}>Surface (ha)</label>
+              <input
+                type="number"
+                value={form.area_hectares ?? ""}
+                onChange={(e) =>
+                  update({
+                    area_hectares: e.target.value === "" ? null : Number(e.target.value),
+                  })
+                }
+                className={inputClass}
+              />
+            </div>
+            <div>
               <label className={labelClass}>Description (FR)</label>
               <AutoResizeTextarea
                 value={form.description_fr ?? ""}
@@ -551,10 +564,6 @@ export function SubregionEditor({ subregion, regions, onClose, onDeleted }: Prop
           onToggle={() => toggleCard("technical")}
         >
           <dl className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2 text-xs">
-            <div>
-              <dt className={labelClass}>Surface (ha)</dt>
-              <dd className="text-slate-800">{form.area_hectares ?? "—"}</dd>
-            </div>
             <div className="sm:col-span-2 grid grid-cols-2 gap-x-3">
               <div>
                 <dt className={labelClass}>Latitude du centroïde</dt>
