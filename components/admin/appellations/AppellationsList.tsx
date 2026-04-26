@@ -127,7 +127,7 @@ export function AppellationsList({
           <thead className="sticky top-0 border-b border-slate-200 bg-slate-50 text-left text-xs text-slate-500">
             <tr>
               <th className="w-10 pl-4 pr-1 py-2 font-medium" aria-label="Statut" />
-              <th className="p-2 font-medium">Nom (FR)</th>
+              <th className="p-2 font-medium">Nom</th>
               <th className="p-2 font-medium">Sous-région</th>
               <th className="p-2 font-medium">Région</th>
             </tr>
@@ -144,7 +144,7 @@ export function AppellationsList({
                 <td className="pl-4 pr-1 py-2">
                   <StatusDot status={a.status} />
                 </td>
-                <td className="p-2 font-medium text-slate-900">{a.name_fr}</td>
+                <td className="p-2 font-medium text-slate-900">{a.name}</td>
                 <td className="p-2 text-slate-600">{a.subregion_name_fr ?? "—"}</td>
                 <td className="p-2 text-slate-600">{a.region_name_fr ?? "—"}</td>
               </tr>

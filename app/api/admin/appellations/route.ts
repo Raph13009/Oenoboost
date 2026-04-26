@@ -7,31 +7,30 @@ export const revalidate = 0;
 export async function GET() {
   const supabase = getSupabaseAdmin();
 
-  const { data: appellationData, error: appellationError } = await supabase
-    .from("appellations")
-    .select("id,slug,name_fr,name_en,status,updated_at")
+  const { data: aopData, error: aopError } = await supabase
+    .from("aop")
+    .select("id,slug,name,status,updated_at")
     .is("deleted_at", null)
-    .order("name_fr", { ascending: true });
-  if (appellationError) {
-    return NextResponse.json({ error: appellationError.message }, { status: 500 });
+    .order("name", { ascending: true });
+  if (aopError) {
+    return NextResponse.json({ error: aopError.message }, { status: 500 });
   }
 
-  const appellationRows = (appellationData ?? []) as unknown as Array<{
-    id: string;
+  const aopRows = (aopData ?? []) as unknown as Array<{
+    id: number;
     slug: string;
-    name_fr: string;
-    name_en: string | null;
+    name: string;
     status: string;
     updated_at: string;
   }>;
-  const appellationIds = appellationRows.map((row) => row.id);
+  const aopIds = aopRows.map((row) => row.id);
   const { data: linkData, error: linkError } = await supabase
-    .from("appellation_subregion_links")
+    .from("aop_subregion_link")
     .select(
       `
-      appellation_id,
+      aop_id,
       subregion_id,
-      wine_subregions!subregion_id(
+      subregions!subregion_id(
         id,
         name_fr,
         region_id,
@@ -39,46 +38,50 @@ export async function GET() {
       )
     `
     )
-    .in("appellation_id", appellationIds);
+    .in("aop_id", aopIds);
   if (linkError) {
     return NextResponse.json({ error: linkError.message }, { status: 500 });
   }
 
-  const firstSubregionByAppellation = new Map<
-    string,
+  const firstSubregionByAop = new Map<
+    number,
     { id: string; name_fr: string | null; region_id: string | null; region_name_fr: string | null }
   >();
-  const appellationLinks = (linkData ?? []) as unknown as Array<{
-    appellation_id: string;
-    subregion_id: string;
-    wine_subregions:
+  const aopLinks = (linkData ?? []) as unknown as Array<{
+    aop_id: number;
+    subregion_id: number;
+    subregions:
       | {
-          id: string;
+          id: number;
           name_fr: string | null;
           region_id: string | null;
           wine_regions: { name_fr: string | null } | { name_fr: string | null }[] | null;
         }
       | null;
   }>;
-  for (const link of appellationLinks) {
-    if (firstSubregionByAppellation.has(link.appellation_id)) continue;
-    const subregion = link.wine_subregions;
+  for (const link of aopLinks) {
+    if (firstSubregionByAop.has(link.aop_id)) continue;
+    const subregion = link.subregions;
     const region = Array.isArray(subregion?.wine_regions)
       ? subregion?.wine_regions[0]
       : subregion?.wine_regions;
-    firstSubregionByAppellation.set(link.appellation_id, {
-      id: subregion?.id ?? link.subregion_id,
+    firstSubregionByAop.set(link.aop_id, {
+      id: subregion?.id != null ? String(subregion.id) : String(link.subregion_id),
       name_fr: subregion?.name_fr ?? null,
       region_id: subregion?.region_id ?? null,
       region_name_fr: region?.name_fr ?? null,
     });
   }
 
-  const appellations = appellationRows.map((row) => {
-    const sr = firstSubregionByAppellation.get(row.id);
+  const appellations = aopRows.map((row) => {
+    const sr = firstSubregionByAop.get(row.id);
 
     return {
-      ...row,
+      id: String(row.id),
+      slug: row.slug,
+      name: row.name,
+      status: row.status,
+      updated_at: row.updated_at,
       subregion_id: sr?.id ?? null,
       subregion_name_fr: sr?.name_fr ?? null,
       region_name_fr: sr?.region_name_fr ?? null,

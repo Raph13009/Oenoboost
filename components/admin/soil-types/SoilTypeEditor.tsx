@@ -192,7 +192,7 @@ function AppellationLinkSelector({
   const requestIdRef = useRef(0);
 
   const sortAppellations = useCallback((items: SoilTypeLinkedAppellation[]) => {
-    return [...items].sort((a, b) => a.name_fr.localeCompare(b.name_fr, "fr", { sensitivity: "base" }));
+    return [...items].sort((a, b) => a.name.localeCompare(b.name, "fr", { sensitivity: "base" }));
   }, []);
 
   const syncDropdownPosition = useCallback(() => {
@@ -414,7 +414,7 @@ function AppellationLinkSelector({
                   title="Retirer l'AOP"
                 >
                   <span className="truncate">
-                    {appellation.name_fr}
+                    {appellation.name}
                     {appellation.region_name_fr ? ` (${appellation.region_name_fr})` : ""}
                   </span>
                   <span className="text-slate-400">×</span>
@@ -454,7 +454,7 @@ function AppellationLinkSelector({
                             index === activeIndex ? "bg-slate-100" : "hover:bg-slate-50"
                           }`}
                         >
-                          <span className="min-w-0 truncate text-slate-900">{appellation.name_fr}</span>
+                          <span className="min-w-0 truncate text-slate-900">{appellation.name}</span>
                           {appellation.region_name_fr ? (
                             <span className="shrink-0 text-xs text-slate-400">{appellation.region_name_fr}</span>
                           ) : null}

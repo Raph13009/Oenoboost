@@ -1,7 +1,6 @@
 import { WorkspacePage } from "@/components/admin/WorkspacePage";
 import { getWineRegionsLite } from "@/app/admin/(cms)/wine-regions/actions";
-import { getWineSubregionsLite } from "@/app/admin/(cms)/wine-subregions/actions";
-import { getAppellations } from "./actions";
+import { getAppellations, getSubregionsLite } from "./actions";
 import { AppellationsView } from "@/components/admin/appellations/AppellationsView";
 
 export default async function AppellationsPage({
@@ -23,7 +22,7 @@ export default async function AppellationsPage({
   let hasNext = false;
   let totalCount = 0;
   let regions: Awaited<ReturnType<typeof getWineRegionsLite>> = [];
-  let subregions: Awaited<ReturnType<typeof getWineSubregionsLite>> = [];
+  let subregions: Awaited<ReturnType<typeof getSubregionsLite>> = [];
   try {
     const res = await getAppellations({
       limit: pageSize,
@@ -42,7 +41,7 @@ export default async function AppellationsPage({
 
   const [regionsRes, subregionsRes] = await Promise.allSettled([
     getWineRegionsLite(),
-    getWineSubregionsLite(),
+    getSubregionsLite(),
   ]);
 
   regions = regionsRes.status === "fulfilled" ? regionsRes.value : [];

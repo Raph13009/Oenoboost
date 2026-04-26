@@ -8,13 +8,23 @@ import {
   validatePublishedAppellationLinkState,
 } from "./link-sync";
 
+/**
+ * Type representing a row of the new `aop` table (int4 ids).
+ *
+ * IDs are exposed as strings on the boundary (URLs, props, state) and
+ * converted to numbers only when calling Supabase. This keeps the rest of the
+ * CMS code (router params, drawer ids, etc.) unchanged after the migration
+ * from the previous `appellations` (uuid) table.
+ */
 export type Appellation = {
   id: string;
+  /** From join with `aop_subregion_link` (int4). */
   subregion_id?: string | null;
   slug: string;
-  name_fr: string;
-  name_en: string | null;
+  /** Single name field replacing the previous bilingual `name_fr` / `name_en`. */
+  name: string;
   area_hectares: number | null;
+  area_m2: number | null;
   producer_count: number | null;
   production_volume_hl: number | null;
   price_range_min_eur: number | null;
@@ -25,26 +35,23 @@ export type Appellation = {
   colors_grapes_en: string | null;
   soils_description_fr: string | null;
   soils_description_en: string | null;
-  geojson: unknown;
-  centroid_lat: number | null;
-  centroid_lng: number | null;
   is_premium: boolean;
   status: string;
   published_at: string | null;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
-  /** From join: wine_subregions.name_fr */
+  /** From join: subregions.name_fr (new int4 table). */
   subregion_name_fr?: string | null;
-  /** From join through subregion: wine_regions.name_fr */
+  /** From join through subregion: wine_regions.name_fr (uuid). */
   region_name_fr?: string | null;
-  /** From join through subregion: wine_subregions.region_id */
+  /** From join through subregion: subregions.region_id (uuid → wine_regions). */
   region_id?: string | null;
 };
 
 export type AppellationListItem = Pick<
   Appellation,
-  "id" | "slug" | "name_fr" | "name_en" | "status" | "updated_at" | "subregion_id" | "subregion_name_fr" | "region_name_fr" | "region_id"
+  "id" | "slug" | "name" | "status" | "updated_at" | "subregion_id" | "subregion_name_fr" | "region_name_fr" | "region_id"
 >;
 
 export type AppellationLinkedSoilType = {
@@ -59,22 +66,22 @@ type LinkedSoilRow = {
   slug: string;
 };
 
-type AppellationRegionRelation = { name_fr: string | null } | { name_fr: string | null }[] | null;
-type AppellationSubregionFetchRow = {
-  appellation_id: string;
-  subregion_id: string;
-  wine_subregions:
+type AopRegionRelation = { name_fr: string | null } | { name_fr: string | null }[] | null;
+type AopSubregionFetchRow = {
+  aop_id: number;
+  subregion_id: number;
+  subregions:
     | {
-        id: string;
+        id: number;
         name_fr: string | null;
         region_id: string | null;
-        wine_regions: AppellationRegionRelation;
+        wine_regions: AopRegionRelation;
       }
     | {
-        id: string;
+        id: number;
         name_fr: string | null;
         region_id: string | null;
-        wine_regions: AppellationRegionRelation;
+        wine_regions: AopRegionRelation;
       }[]
     | null;
 };
@@ -84,9 +91,38 @@ function getFirstRelation<T>(value: T | T[] | null | undefined): T | null {
   return value ?? null;
 }
 
-const APPELLATION_LIST_COLUMNS = "id,slug,name_fr,name_en,status,updated_at";
-const APPELLATION_DETAIL_COLUMNS =
-  "id,slug,name_fr,name_en,area_hectares,producer_count,production_volume_hl,price_range_min_eur,price_range_max_eur,history_fr,history_en,colors_grapes_fr,colors_grapes_en,soils_description_fr,soils_description_en,geojson,centroid_lat,centroid_lng,is_premium,status,published_at,created_at,updated_at,deleted_at";
+function toNumberId(id: string | number | null | undefined): number | null {
+  if (id === null || id === undefined || id === "") return null;
+  const n = typeof id === "number" ? id : Number(id);
+  return Number.isFinite(n) ? n : null;
+}
+
+const AOP_LIST_COLUMNS = "id,slug,name,status,updated_at";
+const AOP_DETAIL_COLUMNS =
+  "id,slug,name,area_m2,area_hectares,producer_count,production_volume_hl,price_range_min_eur,price_range_max_eur,history_fr,history_en,colors_grapes_fr,colors_grapes_en,soils_description_fr,soils_description_en,is_premium,status,published_at,created_at,updated_at,deleted_at";
+
+export type SubregionLite = { id: string; region_id: string; name_fr: string };
+
+/**
+ * Loads the lightweight list of (new) `subregions` (int4) needed to drive the
+ * AOP cascade (region → subregion). Region id remains uuid (`wine_regions`).
+ */
+export async function getSubregionsLite(): Promise<SubregionLite[]> {
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("subregions")
+    .select("id,region_id,name_fr")
+    .is("deleted_at", null)
+    .order("name_fr", { ascending: true });
+  if (error) throw new Error(error.message);
+  return ((data ?? []) as Array<{ id: number | string; region_id: string; name_fr: string | null }>)
+    .filter((row) => row.name_fr != null)
+    .map((row) => ({
+      id: String(row.id),
+      region_id: row.region_id,
+      name_fr: row.name_fr ?? "",
+    }));
+}
 
 export async function getAppellations(options?: {
   limit?: number;
@@ -107,25 +143,29 @@ export async function getAppellations(options?: {
   const from = offset;
   const to = offset + fetchLimit - 1;
 
-  let allowedAppellationIds: string[] | null = null;
+  let allowedAopIds: number[] | null = null;
   if (subregionId && subregionId !== "all") {
+    const subregionIdNum = toNumberId(subregionId);
+    if (subregionIdNum === null) {
+      return { appellations: [], hasPrev: offset > 0, hasNext: false, totalCount: 0 };
+    }
     const { data: subregionLinks, error: subregionLinksError } = await supabase
-      .from("appellation_subregion_links")
-      .select("appellation_id")
-      .eq("subregion_id", subregionId);
+      .from("aop_subregion_link")
+      .select("aop_id")
+      .eq("subregion_id", subregionIdNum);
     if (subregionLinksError) throw new Error(subregionLinksError.message);
-    allowedAppellationIds = Array.from(
-      new Set((subregionLinks ?? []).map((row) => (row as { appellation_id: string }).appellation_id))
+    allowedAopIds = Array.from(
+      new Set((subregionLinks ?? []).map((row) => (row as { aop_id: number }).aop_id))
     );
   } else if (regionId && regionId !== "all") {
     const { data: regionSubregions, error: regionSubregionsError } = await supabase
-      .from("wine_subregions")
+      .from("subregions")
       .select("id")
       .is("deleted_at", null)
       .eq("region_id", regionId);
     if (regionSubregionsError) throw new Error(regionSubregionsError.message);
 
-    const regionSubregionIds = (regionSubregions ?? []).map((row) => (row as { id: string }).id);
+    const regionSubregionIds = (regionSubregions ?? []).map((row) => (row as { id: number }).id);
     if (regionSubregionIds.length === 0) {
       return {
         appellations: [],
@@ -136,17 +176,17 @@ export async function getAppellations(options?: {
     }
 
     const { data: regionLinks, error: regionLinksError } = await supabase
-      .from("appellation_subregion_links")
-      .select("appellation_id")
+      .from("aop_subregion_link")
+      .select("aop_id")
       .in("subregion_id", regionSubregionIds);
     if (regionLinksError) throw new Error(regionLinksError.message);
 
-    allowedAppellationIds = Array.from(
-      new Set((regionLinks ?? []).map((row) => (row as { appellation_id: string }).appellation_id))
+    allowedAopIds = Array.from(
+      new Set((regionLinks ?? []).map((row) => (row as { aop_id: number }).aop_id))
     );
   }
 
-  if (Array.isArray(allowedAppellationIds) && allowedAppellationIds.length === 0) {
+  if (Array.isArray(allowedAopIds) && allowedAopIds.length === 0) {
     return {
       appellations: [],
       hasPrev: offset > 0,
@@ -156,57 +196,54 @@ export async function getAppellations(options?: {
   }
 
   let countQuery = supabase
-    .from("appellations")
+    .from("aop")
     .select("id", { count: "exact", head: true })
     .is("deleted_at", null);
 
   if (query) {
     const escaped = query.replaceAll(",", " ");
-    countQuery = countQuery.or(
-      `name_fr.ilike.%${escaped}%,name_en.ilike.%${escaped}%,slug.ilike.%${escaped}%`
-    );
+    countQuery = countQuery.or(`name.ilike.%${escaped}%,slug.ilike.%${escaped}%`);
   }
   if (status && status !== "all") {
     countQuery = countQuery.eq("status", status);
   }
-  if (Array.isArray(allowedAppellationIds)) {
-    countQuery = countQuery.in("id", allowedAppellationIds);
+  if (Array.isArray(allowedAopIds)) {
+    countQuery = countQuery.in("id", allowedAopIds);
   }
   const { count, error: countError } = await countQuery;
   if (countError) throw new Error(countError.message);
   const totalCount = count ?? 0;
 
   let queryBuilder = supabase
-    .from("appellations")
-    .select(APPELLATION_LIST_COLUMNS)
+    .from("aop")
+    .select(AOP_LIST_COLUMNS)
     .is("deleted_at", null);
 
   if (query) {
     const escaped = query.replaceAll(",", " ");
-    queryBuilder = queryBuilder.or(
-      `name_fr.ilike.%${escaped}%,name_en.ilike.%${escaped}%,slug.ilike.%${escaped}%`
-    );
+    queryBuilder = queryBuilder.or(`name.ilike.%${escaped}%,slug.ilike.%${escaped}%`);
   }
 
   if (status && status !== "all") {
     queryBuilder = queryBuilder.eq("status", status);
   }
 
-  if (Array.isArray(allowedAppellationIds)) {
-    queryBuilder = queryBuilder.in("id", allowedAppellationIds);
+  if (Array.isArray(allowedAopIds)) {
+    queryBuilder = queryBuilder.in("id", allowedAopIds);
   }
 
   const { data, error } = await queryBuilder
-    .order("name_fr", { ascending: true })
+    .order("name", { ascending: true })
     .range(from, to);
   if (error) throw new Error(error.message);
 
-  const rows = ((data ?? []) as Array<Pick<Appellation, "id" | "slug" | "name_fr" | "name_en" | "status" | "updated_at">>).slice(0, limit);
+  type AopRow = { id: number; slug: string; name: string; status: string; updated_at: string };
+  const rawRows = ((data ?? []) as AopRow[]).slice(0, limit);
   const hasNext = (data ?? []).length > limit;
   const hasPrev = offset > 0;
-  const appellationIds = rows.map((row) => row.id);
+  const aopIds = rawRows.map((row) => row.id);
 
-  if (appellationIds.length === 0) {
+  if (aopIds.length === 0) {
     return {
       appellations: [],
       hasPrev,
@@ -216,12 +253,12 @@ export async function getAppellations(options?: {
   }
 
   const { data: linkData, error: linkError } = await supabase
-    .from("appellation_subregion_links")
+    .from("aop_subregion_link")
     .select(
       `
-      appellation_id,
+      aop_id,
       subregion_id,
-      wine_subregions!subregion_id(
+      subregions!subregion_id(
         id,
         name_fr,
         region_id,
@@ -229,50 +266,42 @@ export async function getAppellations(options?: {
       )
     `
     )
-    .in("appellation_id", appellationIds);
-  if (linkError) {
-    return {
-      appellations: rows.map((row) => ({
-        ...row,
-        subregion_id: null,
-        subregion_name_fr: null,
-        region_name_fr: null,
-        region_id: null,
-      })) as AppellationListItem[],
-      hasPrev,
-      hasNext,
-      totalCount,
-    };
-  }
+    .in("aop_id", aopIds);
 
-  const firstSubregionByAppellation = new Map<
-    string,
+  const firstSubregionByAop = new Map<
+    number,
     { id: string; name_fr: string | null; region_id: string | null; region_name_fr: string | null }
   >();
 
-  for (const link of (linkData ?? []) as AppellationSubregionFetchRow[]) {
-    if (firstSubregionByAppellation.has(link.appellation_id)) continue;
-    const subregion = getFirstRelation(link.wine_subregions);
-    const region = getFirstRelation(subregion?.wine_regions);
-    firstSubregionByAppellation.set(link.appellation_id, {
-      id: subregion?.id ?? link.subregion_id,
-      name_fr: subregion?.name_fr ?? null,
-      region_id: subregion?.region_id ?? null,
-      region_name_fr: region?.name_fr ?? null,
-    });
+  if (!linkError) {
+    for (const link of (linkData ?? []) as AopSubregionFetchRow[]) {
+      if (firstSubregionByAop.has(link.aop_id)) continue;
+      const subregion = getFirstRelation(link.subregions);
+      const region = getFirstRelation(subregion?.wine_regions);
+      firstSubregionByAop.set(link.aop_id, {
+        id: subregion?.id != null ? String(subregion.id) : String(link.subregion_id),
+        name_fr: subregion?.name_fr ?? null,
+        region_id: subregion?.region_id ?? null,
+        region_name_fr: region?.name_fr ?? null,
+      });
+    }
   }
 
   return {
-    appellations: rows.map((row) => {
-      const sr = firstSubregionByAppellation.get(row.id);
+    appellations: rawRows.map((row) => {
+      const sr = firstSubregionByAop.get(row.id);
       return {
-        ...row,
+        id: String(row.id),
+        slug: row.slug,
+        name: row.name,
+        status: row.status,
+        updated_at: row.updated_at,
         subregion_id: sr?.id ?? null,
         subregion_name_fr: sr?.name_fr ?? null,
         region_name_fr: sr?.region_name_fr ?? null,
         region_id: sr?.region_id ?? null,
       };
-    }) as AppellationListItem[],
+    }),
     hasPrev,
     hasNext,
     totalCount,
@@ -280,20 +309,23 @@ export async function getAppellations(options?: {
 }
 
 export async function getAppellation(id: string): Promise<Appellation | null> {
+  const aopId = toNumberId(id);
+  if (aopId === null) return null;
+
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
-    .from("appellations")
-    .select(APPELLATION_DETAIL_COLUMNS)
-    .eq("id", id)
+    .from("aop")
+    .select(AOP_DETAIL_COLUMNS)
+    .eq("id", aopId)
     .single();
   if (error || !data) return null;
 
   const { data: linkData, error: linkError } = await supabase
-    .from("appellation_subregion_links")
+    .from("aop_subregion_link")
     .select(
       `
       subregion_id,
-      wine_subregions!subregion_id(
+      subregions!subregion_id(
         id,
         name_fr,
         region_id,
@@ -301,41 +333,62 @@ export async function getAppellation(id: string): Promise<Appellation | null> {
       )
     `
     )
-    .eq("appellation_id", id)
+    .eq("aop_id", aopId)
     .limit(1);
 
   if (linkError) {
     console.warn("[appellations.getAppellation] unable to load subregion link", {
-      appellationId: id,
+      aopId,
       error: linkError.message,
     });
   }
 
   const firstLink = getFirstRelation(
     (linkData ?? []) as Array<{
-      subregion_id: string;
-      wine_subregions:
+      subregion_id: number;
+      subregions:
         | {
-            id: string;
+            id: number;
             name_fr: string | null;
             region_id: string | null;
-            wine_regions: AppellationRegionRelation;
+            wine_regions: AopRegionRelation;
           }
         | {
-            id: string;
+            id: number;
             name_fr: string | null;
             region_id: string | null;
-            wine_regions: AppellationRegionRelation;
+            wine_regions: AopRegionRelation;
           }[]
         | null;
     }>
   );
-  const subregion = getFirstRelation(firstLink?.wine_subregions);
+  const subregion = getFirstRelation(firstLink?.subregions);
   const region = getFirstRelation(subregion?.wine_regions);
 
+  const row = data as Record<string, unknown> & { id: number };
   return {
-    ...(data as Appellation),
-    subregion_id: firstLink?.subregion_id ?? null,
+    id: String(row.id),
+    slug: (row.slug as string) ?? "",
+    name: (row.name as string) ?? "",
+    area_m2: (row.area_m2 as number | null) ?? null,
+    area_hectares: (row.area_hectares as number | null) ?? null,
+    producer_count: (row.producer_count as number | null) ?? null,
+    production_volume_hl: (row.production_volume_hl as number | null) ?? null,
+    price_range_min_eur: (row.price_range_min_eur as number | null) ?? null,
+    price_range_max_eur: (row.price_range_max_eur as number | null) ?? null,
+    history_fr: (row.history_fr as string | null) ?? null,
+    history_en: (row.history_en as string | null) ?? null,
+    colors_grapes_fr: (row.colors_grapes_fr as string | null) ?? null,
+    colors_grapes_en: (row.colors_grapes_en as string | null) ?? null,
+    soils_description_fr: (row.soils_description_fr as string | null) ?? null,
+    soils_description_en: (row.soils_description_en as string | null) ?? null,
+    is_premium: !!row.is_premium,
+    status: (row.status as string) ?? "draft",
+    published_at: (row.published_at as string | null) ?? null,
+    created_at: (row.created_at as string) ?? "",
+    updated_at: (row.updated_at as string) ?? "",
+    deleted_at: (row.deleted_at as string | null) ?? null,
+    subregion_id: firstLink?.subregion_id != null ? String(firstLink.subregion_id) : null,
     subregion_name_fr: subregion?.name_fr ?? null,
     region_id: subregion?.region_id ?? null,
     region_name_fr: region?.name_fr ?? null,
@@ -344,7 +397,6 @@ export async function getAppellation(id: string): Promise<Appellation | null> {
 
 type AppellationForm = Omit<
   Appellation,
-  | "geojson"
   | "id"
   | "created_at"
   | "updated_at"
@@ -354,15 +406,14 @@ type AppellationForm = Omit<
   | "region_id"
 > & {
   id?: string;
-  geojson?: unknown;
 };
 
 function formToRow(form: AppellationForm): Record<string, unknown> {
-  const row: Record<string, unknown> = {
+  return {
     slug: form.slug || null,
-    name_fr: form.name_fr || "",
-    name_en: form.name_en || null,
+    name: form.name || "",
     area_hectares: form.area_hectares ?? null,
+    area_m2: form.area_m2 ?? null,
     producer_count: form.producer_count ?? null,
     production_volume_hl: form.production_volume_hl ?? null,
     price_range_min_eur: form.price_range_min_eur ?? null,
@@ -373,54 +424,39 @@ function formToRow(form: AppellationForm): Record<string, unknown> {
     colors_grapes_en: form.colors_grapes_en || null,
     soils_description_fr: form.soils_description_fr || null,
     soils_description_en: form.soils_description_en || null,
-    centroid_lat: form.centroid_lat ?? null,
-    centroid_lng: form.centroid_lng ?? null,
     is_premium: !!form.is_premium,
     status: form.status || "draft",
     published_at: form.published_at || null,
   };
-
-  if (Object.prototype.hasOwnProperty.call(form, "geojson")) {
-    let geojson: unknown = form.geojson ?? null;
-    if (typeof geojson === "string" && geojson.trim()) {
-      try {
-        geojson = JSON.parse(geojson);
-      } catch {
-        geojson = null;
-      }
-    }
-    row.geojson = geojson;
-  }
-
-  return row;
 }
 
-async function syncAppellationSubregionLink(
-  appellationId: string,
+async function syncAopSubregionLink(
+  aopId: number,
   subregionId?: string | null
 ): Promise<{ error?: string; finalSubregionIds?: string[] }> {
   const supabase = getSupabaseAdmin();
   const { data: existingLinks, error: existingLinksError } = await supabase
-    .from("appellation_subregion_links")
+    .from("aop_subregion_link")
     .select("subregion_id")
-    .eq("appellation_id", appellationId);
+    .eq("aop_id", aopId);
 
   if (existingLinksError) {
     console.error("[appellations.syncSubregionLink] failed to read current links", {
-      appellationId,
+      aopId,
       error: existingLinksError.message,
     });
     return { error: existingLinksError.message };
   }
 
   const existingSubregionIds = (existingLinks ?? [])
-    .map((row) => (row as { subregion_id: string | null }).subregion_id)
-    .filter((value): value is string => value != null);
+    .map((row) => (row as { subregion_id: number | null }).subregion_id)
+    .filter((value): value is number => value != null)
+    .map((value) => String(value));
   const requestedSubregionIds = normalizeSubregionIds(subregionId);
   const plan = buildAppellationSubregionLinkSyncPlan(existingSubregionIds, requestedSubregionIds);
 
   console.info("[appellations.syncSubregionLink] syncing links", {
-    appellationId,
+    aopId,
     existingSubregionIds,
     requestedSubregionIds,
     preserveExisting: plan.preserveExisting,
@@ -429,37 +465,45 @@ async function syncAppellationSubregionLink(
   });
 
   if (plan.toInsert.length > 0) {
-    const { error: upsertError } = await supabase
-      .from("appellation_subregion_links")
-      .upsert(
-        plan.toInsert.map((subregion_id) => ({ appellation_id: appellationId, subregion_id })),
-        { onConflict: "appellation_id,subregion_id", ignoreDuplicates: true }
-      );
+    const insertRows = plan.toInsert
+      .map((subregion_id) => ({ aop_id: aopId, subregion_id: toNumberId(subregion_id) }))
+      .filter((row): row is { aop_id: number; subregion_id: number } => row.subregion_id !== null);
 
-    if (upsertError) {
-      console.error("[appellations.syncSubregionLink] failed to upsert links", {
-        appellationId,
-        toInsert: plan.toInsert,
-        error: upsertError.message,
-      });
-      return { error: upsertError.message };
+    if (insertRows.length > 0) {
+      const { error: upsertError } = await supabase
+        .from("aop_subregion_link")
+        .upsert(insertRows, { onConflict: "aop_id,subregion_id", ignoreDuplicates: true });
+
+      if (upsertError) {
+        console.error("[appellations.syncSubregionLink] failed to upsert links", {
+          aopId,
+          toInsert: plan.toInsert,
+          error: upsertError.message,
+        });
+        return { error: upsertError.message };
+      }
     }
   }
 
   if (plan.toDelete.length > 0) {
-    const { error: deleteError } = await supabase
-      .from("appellation_subregion_links")
-      .delete()
-      .eq("appellation_id", appellationId)
-      .in("subregion_id", plan.toDelete);
+    const deleteIds = plan.toDelete
+      .map((value) => toNumberId(value))
+      .filter((value): value is number => value !== null);
+    if (deleteIds.length > 0) {
+      const { error: deleteError } = await supabase
+        .from("aop_subregion_link")
+        .delete()
+        .eq("aop_id", aopId)
+        .in("subregion_id", deleteIds);
 
-    if (deleteError) {
-      console.error("[appellations.syncSubregionLink] failed to delete stale links", {
-        appellationId,
-        toDelete: plan.toDelete,
-        error: deleteError.message,
-      });
-      return { error: deleteError.message };
+      if (deleteError) {
+        console.error("[appellations.syncSubregionLink] failed to delete stale links", {
+          aopId,
+          toDelete: plan.toDelete,
+          error: deleteError.message,
+        });
+        return { error: deleteError.message };
+      }
     }
   }
 
@@ -478,48 +522,52 @@ export async function createAppellation(
   if (linkValidationError) return { error: linkValidationError };
 
   const row = formToRow(form);
-  const { data, error } = await supabase.from("appellations").insert(row).select("id").single();
+  const { data, error } = await supabase.from("aop").insert(row).select("id").single();
   if (error) return { error: error.message };
-  const createdId = (data as { id: string } | null)?.id;
-  if (!createdId) return { error: "Unable to read created appellation id." };
-  const linkRes = await syncAppellationSubregionLink(createdId, form.subregion_id ?? null);
+  const createdId = (data as { id: number } | null)?.id;
+  if (createdId == null) return { error: "Unable to read created AOP id." };
+  const linkRes = await syncAopSubregionLink(createdId, form.subregion_id ?? null);
   if (linkRes.error) return { error: linkRes.error };
   revalidatePath("/admin/appellations");
-  return { id: createdId };
+  return { id: String(createdId) };
 }
 
 export async function updateAppellation(
   id: string,
   form: AppellationForm
 ): Promise<{ error?: string }> {
+  const aopId = toNumberId(id);
+  if (aopId === null) return { error: "Identifiant AOP invalide." };
+
   const supabase = getSupabaseAdmin();
-  const { data: currentAppellation, error: readError } = await supabase
-    .from("appellations")
+  const { data: currentAop, error: readError } = await supabase
+    .from("aop")
     .select("status")
-    .eq("id", id)
+    .eq("id", aopId)
     .single();
-  if (readError || !currentAppellation) {
+  if (readError || !currentAop) {
     return { error: readError?.message ?? "Impossible de lire l'AOP actuelle." };
   }
 
   const { data: existingLinks, error: existingLinksError } = await supabase
-    .from("appellation_subregion_links")
+    .from("aop_subregion_link")
     .select("subregion_id")
-    .eq("appellation_id", id);
+    .eq("aop_id", aopId);
   if (existingLinksError) {
     return { error: existingLinksError.message };
   }
 
   const existingSubregionIds = (existingLinks ?? [])
-    .map((row) => (row as { subregion_id: string | null }).subregion_id)
-    .filter((value): value is string => value != null);
+    .map((row) => (row as { subregion_id: number | null }).subregion_id)
+    .filter((value): value is number => value != null)
+    .map((value) => String(value));
   const requestedSubregionIds = normalizeSubregionIds(form.subregion_id);
   const plan = buildAppellationSubregionLinkSyncPlan(existingSubregionIds, requestedSubregionIds);
-  const targetStatus = form.status || (currentAppellation as { status: string }).status || "draft";
+  const targetStatus = form.status || (currentAop as { status: string }).status || "draft";
   const linkValidationError = validatePublishedAppellationLinkState(targetStatus, plan.finalSubregionIds);
   if (linkValidationError) {
     console.warn("[appellations.updateAppellation] blocked save without subregion link", {
-      appellationId: id,
+      aopId,
       status: targetStatus,
       existingSubregionIds,
       requestedSubregionIds,
@@ -528,31 +576,35 @@ export async function updateAppellation(
   }
 
   const row = formToRow(form);
-  const { error } = await supabase.from("appellations").update(row).eq("id", id);
+  const { error } = await supabase.from("aop").update(row).eq("id", aopId);
   if (error) return { error: error.message };
-  const linkRes = await syncAppellationSubregionLink(id, form.subregion_id);
+  const linkRes = await syncAopSubregionLink(aopId, form.subregion_id);
   if (linkRes.error) return { error: linkRes.error };
   revalidatePath("/admin/appellations");
   return {};
 }
 
 export async function deleteAppellation(id: string): Promise<{ error?: string }> {
+  const aopId = toNumberId(id);
+  if (aopId === null) return { error: "Identifiant AOP invalide." };
   const supabase = getSupabaseAdmin();
   const { error } = await supabase
-    .from("appellations")
+    .from("aop")
     .update({ deleted_at: new Date().toISOString() })
-    .eq("id", id);
+    .eq("id", aopId);
   if (error) return { error: error.message };
   revalidatePath("/admin/appellations");
   return {};
 }
 
 export async function getAppellationSoilLinks(appellationId: string): Promise<string[]> {
+  const aopId = toNumberId(appellationId);
+  if (aopId === null) return [];
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
-    .from("appellation_soil_links")
+    .from("aop_soil_link")
     .select("soil_type_id")
-    .eq("appellation_id", appellationId);
+    .eq("aop_id", aopId);
   if (error) throw new Error(error.message);
   return (data ?? []).map((r) => (r as { soil_type_id: string }).soil_type_id);
 }
@@ -560,9 +612,11 @@ export async function getAppellationSoilLinks(appellationId: string): Promise<st
 export async function getAppellationSoilLinkItems(
   appellationId: string
 ): Promise<AppellationLinkedSoilType[]> {
+  const aopId = toNumberId(appellationId);
+  if (aopId === null) return [];
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
-    .from("appellation_soil_links")
+    .from("aop_soil_link")
     .select(
       `
       soil_type_id,
@@ -573,7 +627,7 @@ export async function getAppellationSoilLinkItems(
       )
     `
     )
-    .eq("appellation_id", appellationId);
+    .eq("aop_id", aopId);
   if (error) throw new Error(error.message);
 
   const results = (data ?? [])
@@ -625,15 +679,17 @@ export async function addAppellationSoilLink(
   appellationId: string,
   soilTypeId: string
 ): Promise<{ error?: string }> {
+  const aopId = toNumberId(appellationId);
+  if (aopId === null) return { error: "Identifiant AOP invalide." };
   const supabase = getSupabaseAdmin();
   const { error } = await supabase
-    .from("appellation_soil_links")
+    .from("aop_soil_link")
     .upsert(
       {
-        appellation_id: appellationId,
+        aop_id: aopId,
         soil_type_id: soilTypeId,
       },
-      { onConflict: "appellation_id,soil_type_id", ignoreDuplicates: true }
+      { onConflict: "aop_id,soil_type_id", ignoreDuplicates: true }
     );
   if (error) return { error: error.message };
   revalidatePath("/admin/appellations");
@@ -644,11 +700,13 @@ export async function removeAppellationSoilLink(
   appellationId: string,
   soilTypeId: string
 ): Promise<{ error?: string }> {
+  const aopId = toNumberId(appellationId);
+  if (aopId === null) return { error: "Identifiant AOP invalide." };
   const supabase = getSupabaseAdmin();
   const { error } = await supabase
-    .from("appellation_soil_links")
+    .from("aop_soil_link")
     .delete()
-    .eq("appellation_id", appellationId)
+    .eq("aop_id", aopId)
     .eq("soil_type_id", soilTypeId);
   if (error) return { error: error.message };
   revalidatePath("/admin/appellations");
@@ -659,16 +717,18 @@ export async function setAppellationSoilLinks(
   appellationId: string,
   soilTypeIds: string[]
 ): Promise<{ error?: string }> {
+  const aopId = toNumberId(appellationId);
+  if (aopId === null) return { error: "Identifiant AOP invalide." };
   const supabase = getSupabaseAdmin();
   const { error: delError } = await supabase
-    .from("appellation_soil_links")
+    .from("aop_soil_link")
     .delete()
-    .eq("appellation_id", appellationId);
+    .eq("aop_id", aopId);
   if (delError) return { error: delError.message };
 
   if (soilTypeIds.length > 0) {
-    const rows = soilTypeIds.map((soil_type_id) => ({ appellation_id: appellationId, soil_type_id }));
-    const { error: insError } = await supabase.from("appellation_soil_links").insert(rows);
+    const rows = soilTypeIds.map((soil_type_id) => ({ aop_id: aopId, soil_type_id }));
+    const { error: insError } = await supabase.from("aop_soil_link").insert(rows);
     if (insError) return { error: insError.message };
   }
 

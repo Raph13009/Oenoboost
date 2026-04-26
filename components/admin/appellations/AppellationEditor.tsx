@@ -697,9 +697,9 @@ const emptyForm = (): Appellation => ({
   id: "",
   subregion_id: "",
   slug: "",
-  name_fr: "",
-  name_en: null,
+  name: "",
   area_hectares: null,
+  area_m2: null,
   producer_count: null,
   production_volume_hl: null,
   price_range_min_eur: null,
@@ -710,9 +710,6 @@ const emptyForm = (): Appellation => ({
   colors_grapes_en: null,
   soils_description_fr: null,
   soils_description_en: null,
-  geojson: null,
-  centroid_lat: null,
-  centroid_lng: null,
   is_premium: false,
   status: "draft",
   published_at: null,
@@ -799,15 +796,13 @@ export function AppellationEditor({
       const payload = {
         subregion_id: form.subregion_id || null,
         slug: form.slug,
-        name_fr: form.name_fr,
-        name_en: form.name_en,
+        name: form.name,
         area_hectares: form.area_hectares ?? null,
+        area_m2: form.area_m2 ?? null,
         producer_count: form.producer_count ?? null,
         production_volume_hl: form.production_volume_hl ?? null,
         price_range_min_eur: form.price_range_min_eur ?? null,
         price_range_max_eur: form.price_range_max_eur ?? null,
-        centroid_lat: form.centroid_lat ?? null,
-        centroid_lng: form.centroid_lng ?? null,
         history_fr: form.history_fr || null,
         history_en: form.history_en || null,
         colors_grapes_fr: form.colors_grapes_fr || null,
@@ -856,7 +851,7 @@ export function AppellationEditor({
     }
   };
 
-  const panelTitle = form.name_fr?.trim() || form.name_en?.trim() || form.slug?.trim() || "Nouvelle AOP";
+  const panelTitle = form.name?.trim() || form.slug?.trim() || "Nouvelle AOP";
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-white">
@@ -904,17 +899,9 @@ export function AppellationEditor({
       <div className="flex-1 overflow-auto p-3 space-y-4">
         <CollapsibleCard title="Identité" open={cardState.identity} onToggle={() => toggleCard("identity")}>
           <div className="grid grid-cols-1 gap-x-3 gap-y-2.5 sm:grid-cols-2">
-            <div className="sm:col-span-1">
-              <label className={labelClass}>Nom (FR)</label>
-              <input value={form.name_fr} onChange={(e) => update({ name_fr: e.target.value })} className={inputClass} />
-            </div>
-            <div className="sm:col-span-1">
-              <label className={labelClass}>Nom (EN)</label>
-              <input
-                value={form.name_en ?? ""}
-                onChange={(e) => update({ name_en: e.target.value || null })}
-                className={inputClass}
-              />
+            <div className="sm:col-span-2">
+              <label className={labelClass}>Nom</label>
+              <input value={form.name} onChange={(e) => update({ name: e.target.value })} className={inputClass} />
             </div>
             <div className="sm:col-span-2">
               <label className={labelClass}>Slug</label>
@@ -957,6 +944,16 @@ export function AppellationEditor({
                   type="number"
                   value={form.area_hectares ?? ""}
                   onChange={(e) => update({ area_hectares: e.target.value === "" ? null : Number(e.target.value) })}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Surface (m²)</label>
+                <input
+                  type="number"
+                  step="any"
+                  value={form.area_m2 ?? ""}
+                  onChange={(e) => update({ area_m2: e.target.value === "" ? null : Number(e.target.value) })}
                   className={inputClass}
                 />
               </div>
@@ -1125,30 +1122,14 @@ export function AppellationEditor({
           open={cardState.technical}
           onToggle={() => toggleCard("technical")}
         >
-          <dl className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2 text-xs">
+          <dl className="grid grid-cols-1 gap-x-3 gap-y-2 text-xs">
+            <div>
+              <dt className={labelClass}>ID AOP</dt>
+              <dd className="font-mono text-slate-800">{form.id || "—"}</dd>
+            </div>
             <div>
               <dt className={labelClass}>ID sous-région</dt>
               <dd className="font-mono text-slate-800">{form.subregion_id || "—"}</dd>
-            </div>
-            <div className="sm:col-span-2">
-              <dt className={labelClass}>GeoJSON</dt>
-              <dd className="mt-0.5 font-mono text-slate-600 break-all text-[11px]">
-                {form.geojson != null
-                  ? typeof form.geojson === "string"
-                    ? form.geojson
-                    : JSON.stringify(form.geojson)
-                  : "—"}
-              </dd>
-            </div>
-            <div className="sm:col-span-2 grid grid-cols-2 gap-x-3">
-              <div>
-              <dt className={labelClass}>Latitude du centroïde</dt>
-                <dd className="text-slate-800">{form.centroid_lat ?? "—"}</dd>
-              </div>
-              <div>
-                <dt className={labelClass}>Longitude du centroïde</dt>
-                <dd className="text-slate-800">{form.centroid_lng ?? "—"}</dd>
-              </div>
             </div>
           </dl>
         </CollapsibleCard>

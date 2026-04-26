@@ -31,31 +31,37 @@ export type SoilType = {
 
 export type SoilTypeLinkedAppellation = {
   id: string;
-  name_fr: string;
+  name: string;
   region_name_fr: string | null;
 };
 
-type AppellationRegionRelation = { name_fr: string | null } | { name_fr: string | null }[] | null;
-type AppellationSubregionRelation =
+type AopRegionRelation = { name_fr: string | null } | { name_fr: string | null }[] | null;
+type AopSubregionRelation =
   | {
-      wine_regions: AppellationRegionRelation;
+      wine_regions: AopRegionRelation;
     }
   | {
-      wine_regions: AppellationRegionRelation;
+      wine_regions: AopRegionRelation;
     }[]
   | null;
-type AppellationSubregionLinkRelation = {
-  wine_subregions: AppellationSubregionRelation;
+type AopSubregionLinkRelation = {
+  subregions: AopSubregionRelation;
 };
-type AppellationJoinRow = {
-  id: string;
-  name_fr: string;
-  appellation_subregion_links: AppellationSubregionLinkRelation[] | null;
+type AopJoinRow = {
+  id: number;
+  name: string;
+  aop_subregion_link: AopSubregionLinkRelation[] | null;
 };
 
 function getFirstRelation<T>(value: T | T[] | null | undefined): T | null {
   if (Array.isArray(value)) return value[0] ?? null;
   return value ?? null;
+}
+
+function toAopId(id: string | number | null | undefined): number | null {
+  if (id === null || id === undefined || id === "") return null;
+  const n = typeof id === "number" ? id : Number(id);
+  return Number.isFinite(n) ? n : null;
 }
 
 export type SoilTypeListItem = Pick<
@@ -163,15 +169,15 @@ export async function getSoilTypeAppellationLinks(
 ): Promise<SoilTypeLinkedAppellation[]> {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
-    .from("appellation_soil_links")
+    .from("aop_soil_link")
     .select(
       `
-      appellation_id,
-      appellations!appellation_id(
+      aop_id,
+      aop!aop_id(
         id,
-        name_fr,
-        appellation_subregion_links(
-          wine_subregions!subregion_id(
+        name,
+        aop_subregion_link(
+          subregions!subregion_id(
             wine_regions!region_id(name_fr)
           )
         )
@@ -183,25 +189,25 @@ export async function getSoilTypeAppellationLinks(
 
   const results = (data ?? [])
     .map((row) => {
-      const appellation = getFirstRelation(
-        ((row as { appellations: AppellationJoinRow | AppellationJoinRow[] | null }).appellations)
+      const aop = getFirstRelation(
+        ((row as { aop: AopJoinRow | AopJoinRow[] | null }).aop)
       );
 
-      if (!appellation?.id || !appellation.name_fr) return null;
+      if (aop?.id == null || !aop.name) return null;
 
-      const firstLink = appellation.appellation_subregion_links?.[0];
-      const subregion = getFirstRelation(firstLink?.wine_subregions);
+      const firstLink = aop.aop_subregion_link?.[0];
+      const subregion = getFirstRelation(firstLink?.subregions);
       const region = getFirstRelation(subregion?.wine_regions);
 
       return {
-        id: appellation.id,
-        name_fr: appellation.name_fr,
+        id: String(aop.id),
+        name: aop.name,
         region_name_fr: region?.name_fr ?? null,
       };
     })
     .filter((row): row is SoilTypeLinkedAppellation => row !== null);
 
-  return results.sort((a, b) => a.name_fr.localeCompare(b.name_fr, "fr", { sensitivity: "base" }));
+  return results.sort((a, b) => a.name.localeCompare(b.name, "fr", { sensitivity: "base" }));
 }
 
 export async function searchAppellationsForSoilLinks(
@@ -211,42 +217,42 @@ export async function searchAppellationsForSoilLinks(
   const trimmed = query.trim();
 
   let request = supabase
-    .from("appellations")
+    .from("aop")
     .select(
       `
       id,
-      name_fr,
-      appellation_subregion_links(
-        wine_subregions!subregion_id(
+      name,
+      aop_subregion_link(
+        subregions!subregion_id(
           wine_regions!region_id(name_fr)
         )
       )
     `
     )
     .is("deleted_at", null)
-    .order("name_fr", { ascending: true })
+    .order("name", { ascending: true })
     .limit(10);
 
   if (trimmed) {
     const escaped = trimmed.replaceAll(",", " ");
-    request = request.ilike("name_fr", `%${escaped}%`);
+    request = request.ilike("name", `%${escaped}%`);
   }
 
   const { data, error } = await request;
   if (error) throw new Error(error.message);
 
   return ((data ?? []) as Array<{
-    id: string;
-    name_fr: string;
-    appellation_subregion_links: AppellationSubregionLinkRelation[] | null;
+    id: number;
+    name: string;
+    aop_subregion_link: AopSubregionLinkRelation[] | null;
   }>).map((row) => {
-    const firstLink = row.appellation_subregion_links?.[0];
-    const subregion = getFirstRelation(firstLink?.wine_subregions);
+    const firstLink = row.aop_subregion_link?.[0];
+    const subregion = getFirstRelation(firstLink?.subregions);
     const region = getFirstRelation(subregion?.wine_regions);
 
     return {
-      id: row.id,
-      name_fr: row.name_fr,
+      id: String(row.id),
+      name: row.name,
       region_name_fr: region?.name_fr ?? null,
     };
   });
@@ -256,15 +262,17 @@ export async function addSoilTypeAppellationLink(
   soilTypeId: string,
   appellationId: string
 ): Promise<{ error?: string }> {
+  const aopId = toAopId(appellationId);
+  if (aopId === null) return { error: "Identifiant AOP invalide." };
   const supabase = getSupabaseAdmin();
   const { error } = await supabase
-    .from("appellation_soil_links")
+    .from("aop_soil_link")
     .upsert(
       {
-        appellation_id: appellationId,
+        aop_id: aopId,
         soil_type_id: soilTypeId,
       },
-      { onConflict: "appellation_id,soil_type_id", ignoreDuplicates: true }
+      { onConflict: "aop_id,soil_type_id", ignoreDuplicates: true }
     );
   if (error) return { error: error.message };
   revalidatePath("/admin/soil-types");
@@ -275,12 +283,14 @@ export async function removeSoilTypeAppellationLink(
   soilTypeId: string,
   appellationId: string
 ): Promise<{ error?: string }> {
+  const aopId = toAopId(appellationId);
+  if (aopId === null) return { error: "Identifiant AOP invalide." };
   const supabase = getSupabaseAdmin();
   const { error } = await supabase
-    .from("appellation_soil_links")
+    .from("aop_soil_link")
     .delete()
     .eq("soil_type_id", soilTypeId)
-    .eq("appellation_id", appellationId);
+    .eq("aop_id", aopId);
   if (error) return { error: error.message };
   revalidatePath("/admin/soil-types");
   return {};

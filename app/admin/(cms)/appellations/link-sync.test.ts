@@ -5,7 +5,7 @@ import {
   buildAppellationSubregionLinkSyncPlan,
   normalizeSubregionIds,
   validatePublishedAppellationLinkState,
-} from "./link-sync.ts";
+} from "./link-sync";
 
 test("preserves existing links when subregion is absent from payload", () => {
   const plan = buildAppellationSubregionLinkSyncPlan(["subregion-1"], normalizeSubregionIds(undefined));
